@@ -1,0 +1,32 @@
+<div class="jumbotron">
+  <h1>Essary Marker</h1>
+  <p class="lead">
+    The Ultimate Student Essay Submitter
+  </p>
+</div>
+
+<div class="row ">
+  <div class="col-sm-8">
+<!--     <div class="textAng"  contenteditable="true" ng-model="text">
+    </div> -->
+    <div class="textAngular" text-angular ng-model="text">
+      <textarea></textarea>
+    </div>
+    <btn class="btn btn-primary" ng-click="grade()">Grade</btn>
+  </div>
+  <div class="col-sm-4">
+    <input class="filter" placeholder="Filter" ng-model="filter"></input>
+    <ul ng-repeat="comment in comments | filter:filter">
+      <!-- repeat each comment element -->
+      <li>
+        <!-- select from variety of comments -->
+        <select ng-options="commentOption in comment.comments">
+          <option value="{{commentOption}}"></option>
+    </select>
+        <div class="col-sm-4">
+          {{comment.selectedComment}}
+        </div>
+        <button class="btn btn-primary">Add Comment</button></li>
+    </ul>
+  </div>
+</div>
