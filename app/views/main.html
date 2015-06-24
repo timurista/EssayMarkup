@@ -1,7 +1,7 @@
 <div class="jumbotron">
   <h1>Essary Marker</h1>
   <p class="lead">
-    The Ultimate Student Essay Submitter
+    The Ultimate Tool For Teacher Evaluation
   </p>
 </div>
 
@@ -16,17 +16,33 @@
   </div>
   <div class="col-sm-4">
     <input class="filter" placeholder="Filter" ng-model="filter"></input>
-    <ul ng-repeat="comment in comments | filter:filter">
+    <ul ng-repeat="comment in filterObjsBySection(comments)">
       <!-- repeat each comment element -->
       <li>
         <!-- select from variety of comments -->
-        <select ng-options="commentOption in comment.comments">
-          <option value="{{commentOption}}"></option>
-    </select>
-        <div class="col-sm-4">
+        <div class="">
+          <label>Section:</label>
+          <div class="" ng-model="comment.category">{{comment.category}}</div>
+          <label for="">Subsection:</label>
+          <div class="" ng-model="comment.subsection">{{comment.subsection}}</div>
+
+          <label>Comment:</label>
+          <select ng-model="comment.selectedComment" ng-options="newComment.slice(0,10) for newComment in comment.comments ">
+          </select>
+        </div>
+        <div class="">
           {{comment.selectedComment}}
         </div>
-        <button class="btn btn-primary">Add Comment</button></li>
+        
+        <button class="btn btn-primary" ng-click="addComment(comment, $index)">Add Comment</button></li>
+    </ul>
+  </div>
+  <div class="row">
+    <label for="">
+      Current Comments
+    </label>
+    <ul class="" ng-repeat="myComment in myComments track by $index">
+      <li>{{myComment.selectedComment}}</li><button ng-click="removeComment(myComment)">Delete Comment</button>
     </ul>
   </div>
 </div>

@@ -14,7 +14,8 @@ Comments.forEach(function(obj,idx) {
 		'section':obj[1],
 		'subsection':obj[2],
 		'selectedComment':obj[3],
-		'comments':obj.slice(3,-1)
+		'comments':obj.slice(3,-1),
+		'joinedComments':obj.slice(3,-1).join(' ')
 	});
 
 })
@@ -36,6 +37,7 @@ angular.module('essayMarkupV1App')
     ];
     $scope.text = "The text";
     $scope.comments = CommentsObj;
+    $scope.myComments = [];
 
     // function to initiate grading of the text
     $scope.grade = function() {
@@ -44,18 +46,50 @@ angular.module('essayMarkupV1App')
     }
 
     //TODO sort array of comments in obj
+    $scope.filterObjsBySection = function(objectArray) {
+    var result = [];
+    if ($scope.filter.length<1) {
+    	return $scope.comments;
+    }
+    angular.forEach(objectArray, function(obj) {
+        // angular.forEach(value, function (value2, key2) {
+        	// console.log(obj.subsection);
+        if (obj.subsection) {
+	        if (obj.subsection.toLowerCase().indexOf($scope.filter)>-1) {
+	            result.push(obj);
+	        }
+        }
+    });
+    // maybe consider sorting?
+    return result;
+	}
     //TODO array of obj should have id
     //TODO from obj display 
     //format comments
     //TODO provide way to add comments
+    $scope.addComment = function(comment) {
+    	var addedComment = $scope.comments.splice(comment.id,1);
+    	$scope.myComments.push(addedComment[0]);
+    	console.log($scope.myComments);
+    }
     //TODO comments can be added and deducted from the score 
-    //TODO comments added are removed and added to another section
+        //TODO comments added are removed and added to another section
     //TODO comments are added back
+    $scope.removeComment = function(comment, idx) {
+    	// problem if on same screen it doesn't get removed
+    	console.log($scope.myComments)
+    	var removedComment = $scope.myComments.splice(idx,1);
+
+    	// reinsert comment
+    	$scope.comments.splice(comment.id,0,comment);
+    }
 
     //TODO comments when added take away grade
     //TODO associate comment with item in text
 
+
     //TODO comments at bottom
+
     //TODO categories shown at bottom with grade
 
     //TODO after student types, submit report
@@ -64,16 +98,16 @@ angular.module('essayMarkupV1App')
 
 
     $scope.filter = "";
-    $scope.filteredComments = function() {
-    	var c=[];
-    	$scope.comments.forEach( function(obj) {
-    		if (obj[3].includes($scope.filter)) {
-    			c.push(obj[3]);
-    		}
-    	});
-    	console.log(c.length);
+    // $scope.filteredComments = function() {
+    // 	var c=[];
+    // 	$scope.comments.forEach( function(obj) {
+    // 		if (obj[3].includes($scope.filter)) {
+    // 			c.push(obj[3]);
+    // 		}
+    // 	});
+    // 	console.log(c.length);
 
-    	return c;
-    }
+    // 	return c;
+    // }
     
   });
