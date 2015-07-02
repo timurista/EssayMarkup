@@ -60,7 +60,6 @@ angular.module('essayMarkupV1App')
 	        }
         }
     });
-    // maybe consider sorting?
     return result;
 	}
     //TODO array of obj should have id
@@ -83,12 +82,39 @@ angular.module('essayMarkupV1App')
     	// reinsert comment
     	$scope.comments.splice(comment.id,0,comment);
     }
+    // This allows user to switch different tabs
+    $scope.thisSection = 1;
+    $scope.section = function (id) {
+        $scope.thisSection = id;   
+    };
+    $scope.is = function (id) {
+        return $scope.thisSection == id;
+    };
+
+    // Grade Button
+    $scope.grade = function () {
+    	console.log($scope.text);
+    	// $scope.text = $scope.text.toggleClass('hello');
+    	var error = $scope.text.split(' ')[1];
+    	// grab and highlight error
+    	var highlightEl = $scope.highlightError(error);
+    	$scope.text = $scope.text.replace(error,highlightEl);
+    	console.log($scope.text);
+
+
+
+
+    };
+    $scope.highlightError = function (error) {
+    	var el = '<span class="minorError">'+error+'</span>';
+    	return el;
+    };
+
+
 
     //TODO comments when added take away grade
+
     //TODO associate comment with item in text
-
-
-    //TODO comments at bottom
 
     //TODO categories shown at bottom with grade
 
@@ -98,16 +124,4 @@ angular.module('essayMarkupV1App')
 
 
     $scope.filter = "";
-    // $scope.filteredComments = function() {
-    // 	var c=[];
-    // 	$scope.comments.forEach( function(obj) {
-    // 		if (obj[3].includes($scope.filter)) {
-    // 			c.push(obj[3]);
-    // 		}
-    // 	});
-    // 	console.log(c.length);
-
-    // 	return c;
-    // }
-    
   });

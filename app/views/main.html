@@ -1,48 +1,74 @@
 <div class="jumbotron">
   <h1>Essary Marker</h1>
   <p class="lead">
-    The Ultimate Tool For Teacher Evaluation
+    The Ultimate Tool For Analyzing Student Papers
   </p>
 </div>
 
 <div class="row ">
   <div class="col-sm-8">
-<!--     <div class="textAng"  contenteditable="true" ng-model="text">
-    </div> -->
     <div class="textAngular" text-angular ng-model="text">
       <textarea></textarea>
     </div>
-    <btn class="btn btn-primary" ng-click="grade()">Grade</btn>
+    <button class="btn btn-primary" ng-click="grade()">Grade</button>
   </div>
+  
   <div class="col-sm-4">
-    <input class="filter" placeholder="Filter" ng-model="filter"></input>
-    <ul ng-repeat="comment in filterObjsBySection(comments)">
-      <!-- repeat each comment element -->
-      <li>
-        <!-- select from variety of comments -->
-        <div class="">
-          <label>Section:</label>
-          <div class="" ng-model="comment.category">{{comment.category}}</div>
-          <label for="">Subsection:</label>
-          <div class="" ng-model="comment.subsection">{{comment.subsection}}</div>
+    <div class="row">
+      <button class="btn btn-secondary btn-group " ng-click="section(1)">Comments</button>
+      <button class="btn btn-secondary btn-group " ng-click="section(2)">AutoGrading</button>
+    </div>
+    <!-- Shows Comments available to insert -->
+    <div class="row" ng-show="is(1)">
+      <input class="filter form-control" placeholder="Filter" ng-model="filter"></input>
+      <ul class="myComments" ng-repeat="comment in filterObjsBySection(comments)">
+        <!-- repeat each comment element -->
+        <li>
+          <!-- select from variety of comments -->
+          <div class="">
+            <label>Section:</label>
+            <div class="" ng-model="comment.category">{{comment.category}}</div>
+            <label for="">Subsection:</label>
+            <div class="" ng-model="comment.subsection">{{comment.subsection}}</div>
 
-          <label>Comment:</label>
-          <select ng-model="comment.selectedComment" ng-options="newComment.slice(0,10) for newComment in comment.comments ">
-          </select>
-        </div>
-        <div class="">
-          {{comment.selectedComment}}
-        </div>
-        
-        <button class="btn btn-primary" ng-click="addComment(comment, $index)">Add Comment</button></li>
-    </ul>
+            <label>Comment:</label>
+            <select ng-model="comment.selectedComment" ng-options="newComment.slice(0,10) for newComment in comment.comments ">
+            </select>
+          </div>
+          <div class="row">
+            {{comment.selectedComment}}
+          </div>
+          <div class="row">
+            <label>Example</label>
+            <input type="text" ng-model="comment.example" value="{{comment.example}}"></input>
+            <button class="btn btn-primary" ng-click="addComment(comment, $index)">Add Comment</button>       
+          </div>
+          
+          </li>
+      </ul>
+    </div>
+
+    <!-- Shows Grading Options -->
+    <div class="row" ng-show="is(2)">
+      <button class="btn btn-primary" ng-click="grade()">Grade</button>
+    </div>
   </div>
+</div>
   <div class="row">
     <label for="">
       Current Comments
     </label>
     <ul class="" ng-repeat="myComment in myComments track by $index">
-      <li>{{myComment.selectedComment}}</li><button ng-click="removeComment(myComment)">Delete Comment</button>
+      <li>
+        <p>
+        {{myComment.selectedComment}}
+        
+        <span ng-show="{{myComment.example.length>0}}">
+        (Example: {{myComment.example}})
+        </span>
+        <button class="btn btn-danger" ng-click="removeComment(myComment)">Delete Comment</button>
+        </p>
+      </li>
     </ul>
   </div>
 </div>

@@ -59,6 +59,16 @@ body {
   margin-top: 28px;
 }
 
+.myComments {
+  max-height: 500px;
+  min-height: 100px;
+  height: 500px;
+}
+
+.minorError {
+  background-color: lime;
+}
+
 /* Responsive: Portrait tablets and up */
 @media screen and (min-width: 768px) {
   .container {
