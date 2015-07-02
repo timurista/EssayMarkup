@@ -94,6 +94,7 @@ angular.module('essayMarkupV1App')
     // Grade Button
     $scope.grade = function () {
     	console.log($scope.text);
+    	$scope.removeHighlights();
     	// $scope.text = $scope.text.toggleClass('hello');
     	var error = $scope.text.split(' ')[1];
     	// grab and highlight error
@@ -105,8 +106,16 @@ angular.module('essayMarkupV1App')
 
 
     };
+    $scope.removeHighlights = function () {
+    	$('.error').each(function(id,el) {
+    		console.log(el);
+    		// $scope.text = $scope.text.replace(el,el.text);
+    	})
+    }
+
+
     $scope.highlightError = function (error) {
-    	var el = '<span class="minorError">'+error+'</span>';
+    	var el = '<span class="error minorError">'+error+'</span>';
     	return el;
     };
 
