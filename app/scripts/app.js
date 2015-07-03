@@ -18,6 +18,7 @@ angular
     'ngSanitize',
     'ngTouch',
     'textAngular',
+    'autoGrader'
   ])
   .config(function ($routeProvider) {
     $routeProvider
@@ -32,4 +33,10 @@ angular
       .otherwise({
         redirectTo: '/'
       });
+  })
+  .factory('Data', function() {
+    //shared data
+    return {
+      text: 'this is text'
+    }
   });

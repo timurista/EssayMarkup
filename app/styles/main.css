@@ -60,12 +60,14 @@ body {
 }
 
 .myComments {
-  max-height: 500px;
+  max-height: 400px;
   min-height: 100px;
-  height: 500px;
+  overflow-y: scroll;
+  overflow-x: hidden;
+  /*height: 500px;*/
 }
 
-.minorError {
+.error {
   background-color: lime;
 }
 

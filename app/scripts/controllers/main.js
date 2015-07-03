@@ -29,36 +29,25 @@ console.log(CommentsObj);
  * Controller of the essayMarkupV1App
  */
 angular.module('essayMarkupV1App')
-  .controller('MainCtrl', function ($scope) {
-    $scope.awesomeThings = [
-      'HTML5 Boilerplate',
-      'AngularJS',
-      'Karma'
-    ];
-    $scope.text = "The text";
+  .controller('MainCtrl', function ($scope, Data) {
+  	//shared data
+    $scope.text = Data.text;
     $scope.comments = CommentsObj;
     $scope.myComments = [];
 
-    // function to initiate grading of the text
-    $scope.grade = function() {
-    	console.log($scope.text);
-    	$scope.text = '<div class="btn btn-warning">'+$scope.text+'<div>'
-    }
-
     //TODO sort array of comments in obj
     $scope.filterObjsBySection = function(objectArray) {
-    var result = [];
-    if ($scope.filter.length<1) {
-    	return $scope.comments;
-    }
-    angular.forEach(objectArray, function(obj) {
-        // angular.forEach(value, function (value2, key2) {
-        	// console.log(obj.subsection);
-        if (obj.subsection) {
-	        if (obj.subsection.toLowerCase().indexOf($scope.filter)>-1) {
-	            result.push(obj);
+	    var result = [];
+	    if ($scope.filter.length<1) {
+	    	return $scope.comments;
+	    }
+	    angular.forEach(objectArray, function(obj) {
+	        if (obj.subsection) {
+	        	// if filter in subsection
+		        if (obj.subsection.toLowerCase().indexOf($scope.filter)>-1) {
+		            result.push(obj);
+		        }
 	        }
-        }
     });
     return result;
 	}
@@ -68,8 +57,10 @@ angular.module('essayMarkupV1App')
     //TODO provide way to add comments
     $scope.addComment = function(comment) {
     	var addedComment = $scope.comments.splice(comment.id,1);
+    	console.log(addedComment,comment.id);
     	$scope.myComments.push(addedComment[0]);
     	console.log($scope.myComments);
+    	console.log();
     }
     //TODO comments can be added and deducted from the score 
         //TODO comments added are removed and added to another section
@@ -83,6 +74,8 @@ angular.module('essayMarkupV1App')
     	$scope.comments.splice(comment.id,0,comment);
     }
     // This allows user to switch different tabs
+    // involves using ngSwitch
+
     $scope.thisSection = 1;
     $scope.section = function (id) {
         $scope.thisSection = id;   
@@ -91,33 +84,7 @@ angular.module('essayMarkupV1App')
         return $scope.thisSection == id;
     };
 
-    // Grade Button
-    $scope.grade = function () {
-    	console.log($scope.text);
-    	$scope.removeHighlights();
-    	// $scope.text = $scope.text.toggleClass('hello');
-    	var error = $scope.text.split(' ')[1];
-    	// grab and highlight error
-    	var highlightEl = $scope.highlightError(error);
-    	$scope.text = $scope.text.replace(error,highlightEl);
-    	console.log($scope.text);
 
-
-
-
-    };
-    $scope.removeHighlights = function () {
-    	$('.error').each(function(id,el) {
-    		console.log(el);
-    		// $scope.text = $scope.text.replace(el,el.text);
-    	})
-    }
-
-
-    $scope.highlightError = function (error) {
-    	var el = '<span class="error minorError">'+error+'</span>';
-    	return el;
-    };
 
 
 
@@ -129,7 +96,23 @@ angular.module('essayMarkupV1App')
 
     //TODO after student types, submit report
 
-
+  $scope.grade = function () {
+    console.log($scope.text);
+    $scope.removeHighlights();
+    // $scope.text = $scope.text.toggleClass('hello');
+    var error = $scope.text.split(' ')[1];
+    // grab and highlight error
+    var highlightEl = $scope.highlightError(error);
+    $scope.text = $scope.text.replace(error,highlightEl);
+    Data.text = $scope.text;
+    console.log(Data.text);
+  };
+  $scope.removeHighlights = function () {
+    $('.error').each(function(id,el) {
+      console.log(el);
+      // $scope.text = $scope.text.replace(el,el.text);
+    })
+  }
 
 
     $scope.filter = "";

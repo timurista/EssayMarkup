@@ -6,6 +6,7 @@
 </div>
 
 <div class="row ">
+  <!-- grading -->
   <div class="col-sm-8">
     <div class="textAngular" text-angular ng-model="text">
       <textarea></textarea>
@@ -21,22 +22,28 @@
     <!-- Shows Comments available to insert -->
     <div class="row" ng-show="is(1)">
       <input class="filter form-control" placeholder="Filter" ng-model="filter"></input>
-      <ul class="myComments" ng-repeat="comment in filterObjsBySection(comments)">
+      <ul class="myComments" >
         <!-- repeat each comment element -->
-        <li>
-          <!-- select from variety of comments -->
-          <div class="">
-            <label>Section:</label>
-            <div class="" ng-model="comment.category">{{comment.category}}</div>
-            <label for="">Subsection:</label>
-            <div class="" ng-model="comment.subsection">{{comment.subsection}}</div>
-
+        <li ng-repeat="comment in filterObjsBySection(comments)">
+          <div class="row">
+            <div class="col-sm-6">
+              <label>Section:</label>
+              <div  ng-model="comment.category">{{comment.category}}</div>        
+            </div>
+            <div class="col-sm-6">
+              <label for="">Subsection:</label>
+              <div ng-model="comment.subsection">{{comment.subsection}}</div>
+            </div>
+          </div>
+          <div class="row">
             <label>Comment:</label>
             <select ng-model="comment.selectedComment" ng-options="newComment.slice(0,10) for newComment in comment.comments ">
             </select>
           </div>
+            
+          
           <div class="row">
-            {{comment.selectedComment}}
+            {{comment.selectedComment | limitTo: 120 }}{{comment.selectedComment.length > 120 ? '&hellip;' : ''}}
           </div>
           <div class="row">
             <label>Example</label>
@@ -44,13 +51,22 @@
             <button class="btn btn-primary" ng-click="addComment(comment, $index)">Add Comment</button>       
           </div>
           
-          </li>
+        </li>
       </ul>
     </div>
 
     <!-- Shows Grading Options -->
-    <div class="row" ng-show="is(2)">
+    <div class="row" ng-show="is(2)" ng-controller="AGCtrl">
       <button class="btn btn-primary" ng-click="grade()">Grade</button>
+      <ul ng-repeat="category in categories" >
+        <li>
+          <div class="row">
+            <div class="col-md-4">{{category.name}}</div>
+            <div class="col-md-4">Feedback</div>
+            <div class="col-md-4"><strong>{{category.value}}</strong></div>           
+          </div>
+        </li>
+      </ul>
     </div>
   </div>
 </div>
@@ -66,7 +82,7 @@
         <span ng-show="{{myComment.example.length>0}}">
         (Example: {{myComment.example}})
         </span>
-        <button class="btn btn-danger" ng-click="removeComment(myComment)">Delete Comment</button>
+        <button class="btn btn-danger" ng-click="removeComment(myComment)">-</button>
         </p>
       </li>
     </ul>
