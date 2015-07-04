@@ -11,7 +11,6 @@
     <div class="textAngular" text-angular ng-model="text">
       <textarea></textarea>
     </div>
-    <button class="btn btn-primary" ng-click="grade()">Grade</button>
   </div>
   
   <div class="col-sm-4">
@@ -24,7 +23,7 @@
       <input class="filter form-control" placeholder="Filter" ng-model="filter"></input>
       <ul class="myComments" >
         <!-- repeat each comment element -->
-        <li ng-repeat="comment in filterObjsBySection(comments)">
+        <li ng-repeat="comment in comments | filter:filter">
           <div class="row">
             <div class="col-sm-6">
               <label>Section:</label>
@@ -56,17 +55,23 @@
     </div>
 
     <!-- Shows Grading Options -->
-    <div class="row" ng-show="is(2)" ng-controller="AGCtrl">
-      <button class="btn btn-primary" ng-click="grade()">Grade</button>
-      <ul ng-repeat="category in categories" >
-        <li>
-          <div class="row">
-            <div class="col-md-4">{{category.name}}</div>
-            <div class="col-md-4">Feedback</div>
-            <div class="col-md-4"><strong>{{category.value}}</strong></div>           
-          </div>
-        </li>
-      </ul>
+    <div class="row" ng-show="is(2)">
+      <button class="btn btn-primary" ng-click="grade(text)">Grade</button>
+      <div class="row" ng-model="Grade.minLength">
+        {{Grade.minLength}}
+      </div>
+      <table class="table">
+        <tr ng-repeat="category in categories" >
+            <td class="col-md-4">{{category.name}}</td>
+            <td class="col-md-4">{{category.value < .5*defValue ? 'Needs Work':''}}</td>
+            <td class="col-md-4"><strong>{{category.value}}</strong></td>     
+        </tr>
+        <tr>
+          <td>Final Grade</td>
+          <td></td>
+          <td><strong>{{getTotal()}} / {{totalPoints}}</strong></td>
+        </tr>
+      </table>
     </div>
   </div>
 </div>

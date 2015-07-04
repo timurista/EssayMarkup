@@ -18,7 +18,8 @@ angular
     'ngSanitize',
     'ngTouch',
     'textAngular',
-    'autoGrader'
+    'autoGrader',
+    'GradeService'
   ])
   .config(function ($routeProvider) {
     $routeProvider
@@ -37,6 +38,6 @@ angular
   .factory('Data', function() {
     //shared data
     return {
-      text: 'this is text'
-    }
+      text: 'this is text',
+  }
   });
