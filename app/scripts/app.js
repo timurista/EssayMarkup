@@ -18,7 +18,6 @@ angular
     'ngSanitize',
     'ngTouch',
     'textAngular',
-    'autoGrader',
     'GradeService'
   ])
   .config(function ($routeProvider) {

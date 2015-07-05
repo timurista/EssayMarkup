@@ -1,5 +1,5 @@
 <div class="jumbotron">
-  <h1>Essary Marker</h1>
+  <h1>Essay Marker</h1>
   <p class="lead">
     The Ultimate Tool For Analyzing Student Papers
   </p>
@@ -16,7 +16,8 @@
   <div class="col-sm-4">
     <div class="row">
       <button class="btn btn-secondary btn-group " ng-click="section(1)">Comments</button>
-      <button class="btn btn-secondary btn-group " ng-click="section(2)">AutoGrading</button>
+      <button class="btn btn-secondary btn-group " ng-click="section(2)">Grade</button>
+      <button class="btn btn-secondary btn-group " ng-click="section(3)">Options</button>
     </div>
     <!-- Shows Comments available to insert -->
     <div class="row" ng-show="is(1)">
@@ -64,7 +65,8 @@
         <tr ng-repeat="category in categories" >
             <td class="col-md-4">{{category.name}}</td>
             <td class="col-md-4">{{category.value < .5*defValue ? 'Needs Work':''}}</td>
-            <td class="col-md-4"><strong>{{category.value}}</strong></td>     
+            <td class="col-md-4"><strong>{{category.value}}</strong></td>
+
         </tr>
         <tr>
           <td>Final Grade</td>
@@ -72,6 +74,30 @@
           <td><strong>{{getTotal()}} / {{totalPoints}}</strong></td>
         </tr>
       </table>
+    </div>
+    <!-- AutoGrading Options -->
+
+    <div class="row" ng-show="is(3)">
+      <div class="row">
+        <div class="col-sm-4"><label>
+          Minimum Length</label>
+          <input class="form-control" type="text" ng-model="minLength" \>
+        </div>
+        <div class="col-sm-4">
+          <label>Total Points</label>
+          <input class="form-control" type="text" ng-model="totalPoints" \>
+        </div>
+        <div class="col-sm-4">
+          <label>Def Value</label>
+          <input class="form-control" type="text" ng-model="defValue" \>
+        </div>        
+      </div>
+      <div class="row">
+        <div class="col-sm-4">
+          <label>Decrease By</label><input class="form-control" type="text" ng-model="decreaseBy"></div>
+        <div class="col-sm-4">
+          <label>Current Word Count</label><input class="form-control" type="text" ng-model="wc"></div>
+      </div>
     </div>
   </div>
 </div>
