@@ -59,6 +59,15 @@ body {
   margin-top: 28px;
 }
 
+.card {
+  border: 2px solid grey;
+  border-radius: 25px;
+  background-color: #C8E3E8;
+/*  min-height: 250px;*/
+  padding: 10px;
+  margin: 10px;
+}
+
 .myComments {
   max-height: 400px;
   min-height: 100px;
@@ -66,9 +75,29 @@ body {
   overflow-x: hidden;
   /*height: 500px;*/
 }
+ul
+{
+    list-style-type: none;
+}
 
-.error {
+.error, .e {
   background-color: lime;
+}
+
+.tgl-on {
+  background-color: #34A7C1;
+  color: #fff;
+}
+.tgl-off {
+  background-color: #eee;
+  opacity: 0.1;
+  color: #999;
+}
+.btn-remove {
+  background-color: red;
+  border-radius: 80%;
+  color: #fff;
+
 }
 
 /* Responsive: Portrait tablets and up */

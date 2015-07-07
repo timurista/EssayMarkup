@@ -17,7 +17,11 @@ Array.prototype.randomElement = function () {
 var Comment = function(name,points) {
 	this.name=name || "";
 	this.points=points || 0;
-	this.regex=regex;
+}
+
+var Error = function (re,comment) {
+	this.re= re || '';
+	this.comment= comment || 'My Comment';
 }
 
 var CommentsObj = [];
@@ -33,25 +37,23 @@ $.getJSON("scripts/controllers/comments.json", function(json) {
  * # MainCtrl
  * Controller of the essayMarkupV1App
  */
+
 angular.module('essayMarkupV1App')
   .controller('MainCtrl', function ($scope, Data, Grade) {
   	//shared data
     $scope.text = Data.text;
     $scope.comments = CommentsObj;
     $scope.myComments = [];
-    //TODO array of obj should have id
-    //TODO from obj display 
-    //format comments
-    //TODO provide way to add comments
+    //TODO improve filter
     $scope.addComment = function(comment, idx) {
-    	// selected category not getting refreshed
-    	var addedComment = $scope.comments.splice(comment.id,1);
-    	console.log(addedComment,comment.id);
-    	$scope.myComments.push(addedComment[idx]);
-
-    	console.log(addedComment.selectedCategory);
-
-    	var foundCategory = findByName($scope.categories,addedComment.selectedCategory);
+    	// find index for comment, assign it to comment id
+    	comment.id = $scope.comments.indexOf(comment);
+    	// remove comment from list 
+    	$scope.comments.splice(comment.id,1);
+    	// var comment = comment;
+    	console.log(comment,comment.id);
+    	$scope.myComments.push(comment);
+    	var foundCategory = findByName($scope.categories,comment.selectedCategory);
     	console.log(foundCategory);
     	foundCategory.value-=$scope.decreaseBy;
     	// console.log($scope.myComments);
@@ -59,15 +61,38 @@ angular.module('essayMarkupV1App')
     $scope.removeFeedback = function(idx) {
     	$scope.feedback.splice(idx,1);
     }
-    //TODO comments can be added and deducted from the score 
-    //TODO comments added are removed and added to another section
-    //TODO comments are added back
+
+    // remove error
+    $scope.removeError = function (category,error) {
+    	var catID = $scope.categories.indexOf(category);
+    	var errID = $scope.categories[catID].errors.indexOf(error);
+    	//remove Error
+    	$scope.categories[catID].errors.splice(errID,1);
+    }
+    // add Error
+    $scope.addError = function (category,err) {
+    	var Err, catID;
+
+    	try {
+    		Err = new Error(err.re,err.comment);
+    		Err.re = new RegExp('('+Err.re+')','gi')
+    	} catch(e) {
+    		Err = new Error();
+    	}
+    	catID = $scope.categories.indexOf(category);
+    	console.log(Err, catID, category);
+    	if (catID>-1) {
+	    	$scope.categories[catID].errors.unshift(Err);
+    	};
+    }
+
+
     $scope.removeComment = function(comment, idx) {
     	// problem if on same screen it doesn't get removed
     	console.log($scope.myComments)
     	var removedComment = $scope.myComments.splice(idx,1);
 
-			var foundCategory = findByName($scope.categories,addedComment.selectedCategory);    	
+			var foundCategory = findByName($scope.categories,comment.selectedCategory);    	
 			foundCategory.value+=$scope.decreaseBy;
     	// reinsert comment
     	$scope.comments.splice(comment.id,0,comment);
@@ -91,7 +116,7 @@ angular.module('essayMarkupV1App')
     // AUTOGRADING
 
   $scope.minLength = 1000;
-  $scope.feedback = ["feedback here"];
+  $scope.feedback = [];
   $scope.totalPoints = 300;
   $scope.catLen = 5;
   $scope.getDefValue = function() {return $scope.totalPoints/$scope.catLen};
@@ -117,14 +142,14 @@ angular.module('essayMarkupV1App')
      'errors':[
       {'re':/(\si\s)/g,'comment':'"I" should always be capitalized, but an error was found in your essay where it was not capitalized.'},
 // its problems
-      {'re':/(\bits going\b)/gi,'comment':'Make sure to use its appriroately, it\'s is a contraction of it and is while its shows possession.'},
-      {'re':/(\bits supposed\b)/gi,'comment':'Make sure to use its appriroately, it\'s is a contraction of it and is while its shows possession.'},
-      {'re':/(\bits time to\b)/gi,'comment':'Make sure to use its appriroately, it\'s is a contraction of it and is while its shows possession.'},
-      {'re':/(\bits there\b)/gi,'comment':'Make sure to use its appriroately, it\'s is a contraction of it and is while its shows possession.'},
-      {'re':/(\bby it's\b)/gi,'comment':'Make sure to use its appriroately, it\'s is a contraction of it and is while its shows possession.'},
-      {'re':/(\bfor it's\b)/gi,'comment':'Make sure to use its appriroately, it\'s is a contraction of it and is while its shows possession.'},
-      {'re':/(\blost it's\b)/gi,'comment':'Make sure to use its appriroately, it\'s is a contraction of it and is while its shows possession.'},
-      {'re':/(\bits'\b)/gi,'comment':'Make sure to use its appriroately, it\'s is a contraction of it and is while its shows possession.'},
+      {'re':/(\bits going\b)/gi,'comment':'Make sure to use its appropriately, it\'s is a contraction of it and is while its shows possession.'},
+      {'re':/(\bits supposed\b)/gi,'comment':'Make sure to use its appropriately, it\'s is a contraction of it and is while its shows possession.'},
+      {'re':/(\bits time to\b)/gi,'comment':'Make sure to use its appropriately, it\'s is a contraction of it and is while its shows possession.'},
+      {'re':/(\bits there\b)/gi,'comment':'Make sure to use its appropriately, it\'s is a contraction of it and is while its shows possession.'},
+      {'re':/(\bby it's\b)/gi,'comment':'Make sure to use its appropriately, it\'s is a contraction of it and is while its shows possession.'},
+      {'re':/(\bfor it's\b)/gi,'comment':'Make sure to use its appropriately, it\'s is a contraction of it and is while its shows possession.'},
+      {'re':/(\blost it's\b)/gi,'comment':'Make sure to use its appropriately, it\'s is a contraction of it and is while its shows possession.'},
+      {'re':/(\bits'\b)/gi,'comment':'Make sure to use its appropriately, it\'s is a contraction of it and is while its shows possession.'},
 
 // effect vs affect
       {'re':/(\ban? effect\b)/gi,'comment':'Remember, effect is a noun and affect is a verb.'},
@@ -249,6 +274,8 @@ angular.module('essayMarkupV1App')
     console.log(words);
     console.log(twoWords);
 
+    console.log($scope.categories);
+
     // TODO: find repeated phrases or words
     var decreaseBy = 10;
 
@@ -277,6 +304,10 @@ angular.module('essayMarkupV1App')
   $scope.gradeCategory = function (str,category,errors) {
     for (var i = errors.length - 1; i >= 0; i--) {
       var err = errors[i];
+      // break if toggled off
+      if (!err.on) {break;}
+
+
       var re = err.re;
       var comment = err.comment;
 
@@ -332,7 +363,7 @@ angular.module('essayMarkupV1App')
       $scope.categories[i].value=$scope.defValue;          
     };
     // reset feedback
-    $scope.feedback = ["Comments on your essay,"];
+    $scope.feedback = [];
   };
   $scope.randomComplement = function () {
     return ['Great work, you put forth a strong effort here',
@@ -362,51 +393,44 @@ angular.module('essayMarkupV1App')
     // console.log($scope.feedback.length);
   }
 
-   // Grade Button
-  $scope.grade = function () {
-  	// defualt return for now
-  	return $scope.gradeEssay();
+   // Testing the Regex finder
+  $scope.highlightErrors = function (regEx) {
+	    console.log($scope.text);
+	  	$scope.text = $scope.text.replace(/(<span class="e">|<\/span>)/igm, "");
+	    try {
+	    	if (regEx.length) {
+			    var query = new RegExp("(" + regEx + ")", "gim");
+			    $scope.text = $scope.text.replace(query, '<span class="e">$1</span>');
+	    	}
+			}
+			catch(e) {
+		  	$scope.text = $scope.text.replace(/(<span class="e">|<\/span>)/igm, "");
+			}
+	    console.log($scope.text);
+	};
 
+  $scope.customError = new Error();
+  $scope.customErrCategory=$scope.categories[0].name;
 
-    console.log($scope.text);
-    $scope.removeHighlights();
-    // $scope.text = $scope.text.toggleClass('hello');
-    var error = /\bis\b/g;
-    // grab and highlight error
-    var highlightEls = $scope.highlightError(error);
-    highlightEls.forEach( function(id,highlightEl) {
-	    $scope.text = $scope.text.replace(error,highlightEl);
-    });
-  };
-  $scope.removeHighlights = function () {
-  	$scope.text = $scope.text.replace(/<span class="error">(.+?)<\/span>/g,'$1');
-    console.log($scope.text);
-  };
-
-
-  $scope.highlightError = function (error) {
-  	var res = $scope.text.match(error);
-  	// will highlight all errors soon
-  	var el=[];
-  	res.forEach( function (idx, obj) {
-  		console.log(idx,obj);
-	    el.push('<span class="error">'+res+'</span>');
-  	})
-    return el;
-  };
-
-
-
-
-    //TODO comments when added take away grade
-
-    //TODO associate comment with item in text
-
-    //TODO categories shown at bottom with grade
-
-    //TODO after student types, submit report
-
-
-
-    $scope.filter = "";
+  $scope.$watch('customError.re', function() {
+  	try {
+	  	$scope.highlightErrors($scope.customError.re);
+  	}
+  	catch(e) {
+  		// $scope.text = $scope.text.replace(/(<span class="e">|<\/span>)/igm, "");
+  		$scope.customError = new Error();
+  	}
   });
+
+  $scope.$watch('categories', function() {
+  	$scope.categories.forEach( function(obj) {
+  		obj.value = (obj.value<0) ? 0: obj.value;
+  	});
+  });
+
+  //TODO categories shown at bottom with grade
+
+  //TODO after student types, submit report
+  $scope.filter = "";
+  
+});
