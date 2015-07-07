@@ -1,4 +1,18 @@
 'use strict';
+// find by name
+var findByName = function(Objects, Name) {
+    for (var i = 0, len = Objects.length; i < len; i++) {
+    	console.log(Objects[i].name, Name)
+        if (Objects[i].name === Name)
+            return Objects[i]; // Return as soon as the object is found
+    }
+    return null; // The object was not found
+}
+// helper for random element
+Array.prototype.randomElement = function () {
+    return this[Math.floor(Math.random() * this.length)]
+}
+
 // class for adding comments
 var Comment = function(name,points) {
 	this.name=name || "";
@@ -30,11 +44,20 @@ angular.module('essayMarkupV1App')
     //format comments
     //TODO provide way to add comments
     $scope.addComment = function(comment, idx) {
+    	// selected category not getting refreshed
     	var addedComment = $scope.comments.splice(comment.id,1);
     	console.log(addedComment,comment.id);
-    	$scope.myComments.push(addedComment[0]);
+    	$scope.myComments.push(addedComment[idx]);
+
+    	console.log(addedComment.selectedCategory);
+
+    	var foundCategory = findByName($scope.categories,addedComment.selectedCategory);
+    	console.log(foundCategory);
+    	foundCategory.value-=$scope.decreaseBy;
     	// console.log($scope.myComments);
-    	console.log();
+    }
+    $scope.removeFeedback = function(idx) {
+    	$scope.feedback.splice(idx,1);
     }
     //TODO comments can be added and deducted from the score 
     //TODO comments added are removed and added to another section
@@ -44,6 +67,8 @@ angular.module('essayMarkupV1App')
     	console.log($scope.myComments)
     	var removedComment = $scope.myComments.splice(idx,1);
 
+			var foundCategory = findByName($scope.categories,addedComment.selectedCategory);    	
+			foundCategory.value+=$scope.decreaseBy;
     	// reinsert comment
     	$scope.comments.splice(comment.id,0,comment);
     }
@@ -68,9 +93,24 @@ angular.module('essayMarkupV1App')
   $scope.minLength = 1000;
   $scope.feedback = ["feedback here"];
   $scope.totalPoints = 300;
-  $scope.defValue = $scope.totalPoints/5;
-  $scope.decreaseBy = Math.ceil($scope.defValue*.1);
-  $scope.wc = $scope.text.match(/(\w)+/gi).length;
+  $scope.catLen = 5;
+  $scope.getDefValue = function() {return $scope.totalPoints/$scope.catLen};
+  $scope.defValue = $scope.getDefValue();
+  $scope.getDecreaseBy = function() {return Math.ceil(($scope.totalPoints/$scope.catLen)*.1)};
+  $scope.decreaseBy = $scope.getDecreaseBy();
+  $scope.getWordCount = function () {
+  	return $scope.text.match(/(\w)+/gi).length};
+  $scope.wc = $scope.getWordCount;
+  // if total points changes, update default Value and decreasy by
+  $scope.$watch('totalPoints',function() {
+  	$scope.decreaseBy = $scope.getDecreaseBy();
+  	$scope.defValue = $scope.getDefValue();
+  });
+    $scope.$watch('defValue',function() {
+  	$scope.decreaseBy = $scope.getDecreaseBy();
+  	$scope.totalPoints = $scope.defValue*$scope.catLen;
+  });
+
   $scope.categories = [
     {'name': 'Grammar and Spelling',
      'value':$scope.defValue,
@@ -187,6 +227,17 @@ angular.module('essayMarkupV1App')
     };
   }
 
+  // category names
+  $scope.categoryNames = function() {
+  	var names = [];
+  	$scope.categories.forEach( function(cat) {
+  		if (names.indexOf(cat.name)<0){
+	  		names.push(cat.name);  			
+  		}
+  	})
+  	return names;
+  }
+
   //grade essay part 1
   $scope.gradeEssay = function () {
     // reset to normal values
@@ -202,7 +253,6 @@ angular.module('essayMarkupV1App')
     var decreaseBy = 10;
 
     // word count
-    $scope.wc = $scope.wordCount();
     $scope.gradeContent();
     $scope.gradeDocumentation();
     for (var i = $scope.categories.length - 1; i >= 0; i--) {
@@ -262,9 +312,9 @@ angular.module('essayMarkupV1App')
   }
   // search word count
   $scope.gradeContent = function () {
-    if ($scope.wc<$scope.minLength) {
+    if ($scope.wc()<$scope.minLength) {
       // get score
-      var percentDiff = ($scope.wc/$scope.minLength);
+      var percentDiff = ($scope.wc()/$scope.minLength);
       var deduct = Math.ceil($scope.defValue-($scope.defValue*percentDiff));
       for (var i = $scope.categories.length - 1; i >= 0; i--) {
         // deduct points
@@ -312,7 +362,7 @@ angular.module('essayMarkupV1App')
     // console.log($scope.feedback.length);
   }
 
-      // Grade Button
+   // Grade Button
   $scope.grade = function () {
   	// defualt return for now
   	return $scope.gradeEssay();

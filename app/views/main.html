@@ -34,6 +34,9 @@
               <label for="">Subsection:</label>
               <div ng-model="comment.subsection">{{comment.subsection}}</div>
             </div>
+            <div class="col-sm-6">
+              <select ng-model="comment.selectedCategory" ng-options="name for name in categoryNames()"></select>
+            </div>
           </div>
           <div class="row">
             <label>Comment:</label>
@@ -95,18 +98,20 @@
       <div class="row">
         <div class="col-sm-4">
           <label>Decrease By</label><input class="form-control" type="text" ng-model="decreaseBy"></div>
-        <div class="col-sm-4">
-          <label>Current Word Count</label><input class="form-control" type="text" ng-model="wc"></div>
       </div>
     </div>
   </div>
 </div>
   <div class="row">
-    <label for="">
-      Current Comments
+    <label>Specific Feedback</label>
+      <ul>
+        <li ng-repeat="myFeedback in feedback">{{myFeedback}}</li>
+      </ul>
+    <label>
+      Additional Comments
     </label>
-    <ul class="" ng-repeat="myComment in myComments track by $index">
-      <li>
+    <ul class="">
+      <li ng-repeat="myComment in myComments track by $index"> 
         <p>
         {{myComment.selectedComment}}
         
