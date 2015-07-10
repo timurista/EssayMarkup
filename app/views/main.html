@@ -23,11 +23,12 @@
   
   <div class="col-sm-7">
     <div class="row">
-      <button class="btn btn-secondary btn-group " ng-click="section(1)">Comments</button>
-      <button class="btn btn-secondary btn-group " ng-click="section(2)">Grade</button>
-      <button class="btn btn-secondary btn-group " ng-click="section(3)">Options</button>
-      <button class="btn btn-secondary btn-group " ng-click="section(4)">RegEx</button>
-      <button class="btn btn-secondary btn-group " ng-click="section(5)">Plagiarism</button>
+      <button class="btn btn-secondary btn-group" ng-class="{'btn-primary':is(1)}" ng-click="section(1)">Comments</button>
+      <button class="btn btn-secondary btn-group " ng-click="section(2)" ng-class="{'btn-primary':is(2)}">Grade</button>
+      <button class="btn btn-secondary btn-group " ng-click="section(3) " ng-class="{'btn-primary':is(3)}">Options</button>
+      <button class="btn btn-secondary btn-group " ng-click="section(4)" ng-class="{'btn-primary':is(4)}">RegEx</button>
+      <button class="btn btn-secondary btn-group " ng-click="section(5)" ng-class="{'btn-primary':is(5)}">Plagiarism</button>
+      <button class="btn btn-secondary btn-group " ng-click="section(6)" ng-class="{'btn-primary':is(6)}">New Comment</button>
     </div>
     <!-- Shows Comments available to insert -->
     <div class="row" ng-show="is(1)">
@@ -36,34 +37,35 @@
         <!-- repeat each comment element -->
         <li ng-repeat="comment in comments | filter:filter track by $index" class="card">
          <!-- ng-show="filtered(comment.selectedComment)"> -->
-          <div class="row">
+          <div class="row" ng-click="showFullComment=!showFullComment">
             <div class="col-sm-6">
-              <label>Section:</label>
-              <div  ng-model="comment.category">{{comment.category}}</div>        
+              <span><strong>Section:</strong></span>
+              <span  ng-model="comment.category">{{comment.category}}</span>        
             </div>
             <div class="col-sm-6">
-              <label for="">Subsection:</label>
-              <div ng-model="comment.subsection">{{comment.subsection}}</div>
-            </div>
-            <div class="col-sm-6">
-              <select ng-model="comment.selectedCategory" ng-options="name for name in categoryNames()"></select>
+              <span><strong>Subsection:</strong></span>
+              <span ng-model="comment.subsection">{{comment.subsection}}</span>
             </div>
           </div>
-          <div class="row">
+          <div class="row" ng-show="showFullComment">
+            <div class="col-sm-12">
+              <label>Grading Category:</label> <select ng-model="comment.selectedCategory" ng-options="name for name in categoryNames()"></select>
+            </div>
+          </div>
+          <div class="row" ng-show="showFullComment">
             <div class="col-sm-12">
               <label>Comment:</label>
               <select ng-model="comment.selectedComment" ng-options="newComment.slice(0,10) for newComment in comment.comments ">
               </select>              
             </div>
           </div>
-            
-          
-          <div class="row">
+                
+          <div class="row" ng-show="showFullComment">
             <div class="col-sm-12">
-              {{comment.selectedComment | limitTo: 120 }}{{comment.selectedComment.length > 120 ? '&hellip;' : ''}}              
+              {{comment.selectedComment}}             
             </div>
           </div>
-          <div class="row">
+          <div class="row" ng-show="showFullComment">
             <div class="col-sm-12">
               <label>Example</label>
               <input type="text" ng-model="comment.example" value="{{comment.example}}"></input>
@@ -75,7 +77,7 @@
       </ul>
     </div>
 
-    <!-- Shows Grading Options -->
+    <!-- Auto Grading Options -->
     <div class="row" ng-show="is(2)">
       <button class="btn btn-primary" ng-click="gradeEssay()">Auto Grade</button>
       <!-- shows all categories  -->
@@ -87,6 +89,16 @@
           <button class="btn btn-secondary" ng-click="addError(category)">Add new Error</button>
           <li ng-repeat="error in category.errors" class="card">
             <div class="row">
+              <div class="col-md-2">
+                <button ng-init="error.on=true" ng-model="error.on" ng-click="error.on=!error.on" ng-class="{'btn tgl-on':error.on, 'btn tg-off':!error.on}">
+                  Turned {{error.on ? 'On':'Off'}}
+                </button>
+              </div>
+              <div class="col-sm-10" ng-click="errorShow=!errorShow">
+                #{{$index+1}} - {{error.name | limitTo: 70 }}{{error.name.length > 70 ? '&hellip;' : ''}} 
+              </div>
+            </div>
+            <div class="row" ng-show="errorShow">
               <div class="col-md-5">
                 <span>#{{$index+1}} - </span>
                 <label>RegEx</label>
@@ -98,25 +110,17 @@
                 <textarea class="form-control" ng-model="error.comment"></textarea>
               </div>             
             </div>
-
-            <div class="row">
-              <div class="col-md-2">
-                <button ng-init="error.on=true" ng-model="error.on" ng-click="error.on=!error.on" ng-class="{'btn tgl-on':error.on, 'btn tg-off':!error.on}">
-                  Turned {{error.on ? 'On':'Off'}}
-                </button>
-              </div>
+            <div class="row" ng-show="errorShow">
               <div class="col-md-2 pull-right">
                 <button class="btn btn-remove" align="center" ng-click="removeError(category,error)">X</button>
               </div>
             </div>
-
-            
           </li>
         </ul>  
       </div>
 
     </div>
-    <!-- AutoGrading Options -->
+    <!-- General Options -->
     <div class="row" ng-show="is(3)">
       <div class="row">
         <div class="col-sm-4"><label>
@@ -136,26 +140,90 @@
         <div class="col-sm-4">
           <label>Decrease By</label><input class="form-control" type="text" ng-model="decreaseBy"></div>
       </div>
+      <div class="row">
+        <div class="col-sm-12">
+          <label>Key Words</label>
+          <textarea class="form-control" ng-model="keyWords"></textarea>
+        </div>
+      </div>
     </div>
 
     <!-- Check Expressions -->
     <div class="row" ng-show="is(4)">
       <p>You can test regular expressions here and then enter the comments into your own autoGrade function.</p>
-      <div class="input-group">
-        <span class="input-group-addon">/(</span>
-        <input type="text" class="form-control input-group" ng-model="customError.re"><span class="input-group-addon">)/gi</span>
+      <div class="col-sm-12">
+        <label>Short Name</label>
+        <input type="text" class="form-control" ng-model="customError.name">
       </div>
-      <textarea class="form-control" ng-model="customError.comment"></textarea>
-      <select 
-      ng-model="customErrCategory" ng-options="category.name for category in categories"></select>
-      <button class="btn btn-primary" ng-click="addError(customErrCategory, customError); customError=defError"
-      ng-show="customError.re.length">Add New Error</button>
+      <div class="col-sm-12">
+        <label>Regular Expression (Which Evaluates on AutoGrade)</label>
+        <div class="input-group">
+          <span class="input-group-addon">/(</span>
+          <input type="text" class="form-control input-group" ng-model="customError.re"><span class="input-group-addon">)/gi</span>
+        </div>
+      </div>
+      <div class="col-sm-12">
+        <label>Custom Comment (appears under Specific Feedback if error is found)</label>
+        <textarea class="form-control" ng-model="customError.comment"></textarea>
+      </div>
+      <div class="col-sm-12">
+        <label>Category to be reduced</label>
+        <select 
+        ng-model="customErrCategory" ng-options="category.name for category in categories"></select>
+        <button class="btn btn-primary" ng-click="addError(customErrCategory, customError); customError=defError"
+        ng-show="customError.re.length">Add New Error</button>  
+      </div>
     </div>
-  </div>
+
+    <!-- Add New Comment -->
+    <div class="row card" ng-show="is(6)">
+      <h2 class="text-center">Create New Comment</h2>
+      <div class="row">
+        <div class="col-sm-6">
+          <span><strong>Section:</strong></span>
+          <select type="text" class="form-control" ng-model="newSection"  ng-options="section for section in sectionNames"></select>      
+        </div>
+        <div class="col-sm-6">
+          <span><strong>Subsection:</strong></span>
+          <input type="text" class="form-control" ng-model="newSubsection">
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-sm-12">
+          <label>Grading Category:</label> <select class="form-control" ng-model="newSelectedCategory" ng-options="name for name in categoryNames()"></select>
+        </div>
+      </div>
+        <div class="row">
+          <div class="col-sm-12">
+            <label>Comments:</label>
+            STATUS: BROKEN!!! Add ability to add more comments
+            <button class="btn btn-primary btn-group" ng-click="addAllNewComment('')">+</button>              
+              <select class="form-control" ng-model="newSelectedComment" ng-options="newComment.slice(0,20) for newComment in allNewComments track by $index">
+              </select>
+          </div>
+        </div>
+                
+          <div class="row">
+            <div class="col-sm-12">
+              <textarea class="form-control" ng-model="newSelectedComment">
+              </textarea>           
+            </div>
+          </div>
+          <div class="row" ng-show="newSubsection.length && newSelectedComment.length">
+            <div class="col-sm-12">
+              <button class="btn btn-primary" ng-click="addToComments(comment, $index)">Add New Comment</button>  
+            </div>     
+          </div>
+      </div>
+    </div>
+    <!-- External Plagairism Checker -->
   <div class="row-fluid" ng-show="is(5)">
       <iframe src="http://www.paperrater.com/plagiarism_checker/" style="zoom:0.60" width="55%" height="500" frameborder="0"
       clas="container well"></iframe>
+
+    
   </div>
+
 </div>
 <!-- Feedback -->
   <div class="row">

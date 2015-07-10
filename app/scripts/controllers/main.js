@@ -42,11 +42,25 @@ angular.module('essayMarkupV1App')
   .controller('MainCtrl', function ($scope, Data, Grade) {
   	//shared data
     $scope.text = Data.text;
+    // Object to hold all comments
     $scope.comments = CommentsObj;
     $scope.myComments = [];
 
-
     //TODO allow custom functions to be inserted and run
+    $scope.sectionNames = [];
+    $scope.comments.forEach( function(comment) {
+      if ($scope.sectionNames.indexOf(comment.category)<0) {
+        $scope.sectionNames.push(comment.category);
+      } 
+    });
+    $scope.newSection = $scope.sectionNames[0];
+    $scope.newSelectedComment='A New Comment';
+    $scope.allNewComments = [$scope.newSelectedComment];
+    $scope.addAllNewComment = function(comment) {
+      $scope.allNewComments.push(comment);
+    }
+
+
 
     //TODO print to other screen option
 
@@ -186,22 +200,22 @@ angular.module('essayMarkupV1App')
       {'re':/(\bits'\b)/gi,'comment':'Make sure to use its appropriately, it\'s is a contraction of it and is while its shows possession.','name':'Wrong it\'s'},
 
 // effect vs affect
-      {'re':/(\ban? effect\b)/gi,'comment':'Remember, effect is a noun and affect is a verb.'},
-      {'re':/(\b\w+ effects (the|an|a)\b)/gi,'comment':'Remember, effect is a noun and affect is a verb.'},
+      {'re':/(\ban? effect\b)/gi,'comment':'Remember, effect is a noun and affect is a verb.','name':'Effect vs Affect'},
+      {'re':/(\b\w+ effects (the|an|a)\b)/gi,'comment':'Remember, effect is a noun and affect is a verb.','name':'Effect vs Affect'},
 // piece vs peace
-      {'re':/(\bpeaces? of \w+)/gi,'comment':'Remember, piece refers to a part of something while peace is a state of calmness.'},
+      {'re':/(\bpeaces? of \w+)/gi,'comment':'Remember, piece refers to a part of something while peace is a state of calmness.','name':"Piece vs Peace"},
 // their vs there
-      {'re':/(\bTheir are \w+)/gi,'comment':'Remember, their is for possession while there is for making statements.'},
-      {'re':/(\bis there \w+)/gi,'comment':'Remember, their is for possession while there is for making statements.'},
-      {'re':/(\bits theres\w+)/gi,'comment':'Remember, their is for possession while there is for making statements.'},
-      {'re':/(\bto there \w+)/gi,'comment':'Remember, their is for possession while there is for making statements.'},
+      {'re':/(\bTheir are \w+)/gi,'comment':'Remember, their is for possession while there is for making statements.','name':'There vs Their'},
+      {'re':/(\bis there \w+)/gi,'comment':'Remember, their is for possession while there is for making statements.','name':'There vs Their'},
+      {'re':/(\bits theres\w+)/gi,'comment':'Remember, their is for possession while there is for making statements.','name':'There vs Their'},
+      {'re':/(\bto there \w+)/gi,'comment':'Remember, their is for possession while there is for making statements.','name':'There vs Their'},
 
 // compound words
-      {'re':/(\bbed room\b)/gi,'comment':'Compound words such as bedroom and others should be one words not split into two.'},
-      {'re':/(\bsnow flake\b)/gi,'comment':'Compound words such as bedroom and others should be one words not split into two.'},
+      {'re':/(\bbed room\b)/gi,'comment':'Compound words such as bedroom and others should be one words not split into two.','name':'Compound Words'},
+      {'re':/(\bsnow flake\b)/gi,'comment':'Compound words such as bedroom and others should be one words not split into two.','name':'Compound Words'},
 
 // mechanics issues
-      {'re':/(\ba [aeio]\w+)/gi,'comment':'Remember, use an before words that begin with vowels.'},
+      {'re':/(\ba [aeio]\w+)/gi,'comment':'Remember, use an before words that begin with vowels.','name':'Missing an before vowel'},
       {'re':/(\w{4,}\.\s* [a-z]\w+)/g,'comment':'Capitalization is a problem in this essay.'},
       {'re':/(\w+[A-Z]\w{4,})/g,'comment':'Avoid all caps in your essay, even if you are citing a web source.'},
 
