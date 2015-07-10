@@ -1,31 +1,41 @@
 <div class="jumbotron">
   <h1>Essay Marker</h1>
   <p class="lead">
-    The Ultimate Tool For Analyzing Student Papers
+    The Ultimate Tool For Grading Student Papers
   </p>
 </div>
 
 <div class="row ">
   <!-- grading -->
-  <div class="col-sm-8">
-    <div class="textAngular" text-angular ng-model="text">
+  <div class="col-sm-5">
+    <div class="row">
+      <div class="col-sm-8">
+        Current Grade: {{getTotal() / totalPoints*100 | number:1}}%
+      </div>
+      <div class="col-sm-4">
+        Words: {{getWordCount()}}
+      </div>
+    </div>
+    <div class="textAngular" ta-toolbar=[['h1','h2','h3'],['bold','italics','underline']] text-angular ng-model="text">
       <textarea></textarea>
     </div>
   </div>
   
-  <div class="col-sm-4">
+  <div class="col-sm-7">
     <div class="row">
       <button class="btn btn-secondary btn-group " ng-click="section(1)">Comments</button>
       <button class="btn btn-secondary btn-group " ng-click="section(2)">Grade</button>
       <button class="btn btn-secondary btn-group " ng-click="section(3)">Options</button>
       <button class="btn btn-secondary btn-group " ng-click="section(4)">RegEx</button>
+      <button class="btn btn-secondary btn-group " ng-click="section(5)">Plagiarism</button>
     </div>
     <!-- Shows Comments available to insert -->
     <div class="row" ng-show="is(1)">
       <input class="filter form-control" placeholder="Filter" ng-model="filter"></input>
-      <ul class="myComments" >
+      <ul class="myComments col-sm-12" >
         <!-- repeat each comment element -->
         <li ng-repeat="comment in comments | filter:filter track by $index" class="card">
+         <!-- ng-show="filtered(comment.selectedComment)"> -->
           <div class="row">
             <div class="col-sm-6">
               <label>Section:</label>
@@ -141,6 +151,10 @@
       <button class="btn btn-primary" ng-click="addError(customErrCategory, customError); customError=defError"
       ng-show="customError.re.length">Add New Error</button>
     </div>
+  </div>
+  <div class="row-fluid" ng-show="is(5)">
+      <iframe src="http://www.paperrater.com/plagiarism_checker/" style="zoom:0.60" width="55%" height="500" frameborder="0"
+      clas="container well"></iframe>
   </div>
 </div>
 <!-- Feedback -->

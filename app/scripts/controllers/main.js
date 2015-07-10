@@ -15,7 +15,7 @@ Array.prototype.randomElement = function () {
 
 // class for adding comments
 var Comment = function(name,points) {
-	this.name=name || "";
+	this.name=name || '';
 	this.points=points || 0;
 }
 
@@ -44,7 +44,41 @@ angular.module('essayMarkupV1App')
     $scope.text = Data.text;
     $scope.comments = CommentsObj;
     $scope.myComments = [];
+
+
+    //TODO allow custom functions to be inserted and run
+
+    //TODO print to other screen option
+
+    //TODO allow saving and caching resources
+
+    //TODO stylize elements
+
+    //TODO mobile small devices layout
+
+    //TODO add custom comment insert
+
     //TODO improve filter
+    $scope.filtered = function(text) {
+    	return text.indexOf($scope.filter)>-1;
+    }
+    $scope.filter = "";
+    //TODO filter
+    $scope.filterItems = function (arr) {
+      if ($scope.filter.length>0) {
+        return $.grep(arr, function( a ) {
+          return a.selectedComment.indexOf($scope.filter)>-1;
+        });
+      }
+      else {return arr;}
+    }
+    $scope.filteredStuff = $scope.filterItems($scope.comments);
+
+    // $scope.$watch('filter',function() {
+    //   $scope.filteredStuff = $scope.filterItems($scope.comments);
+    // })
+
+
     $scope.addComment = function(comment, idx) {
     	// find index for comment, assign it to comment id
     	comment.id = $scope.comments.indexOf(comment);
@@ -140,16 +174,16 @@ angular.module('essayMarkupV1App')
     {'name': 'Grammar and Spelling',
      'value':$scope.defValue,
      'errors':[
-      {'re':/(\si\s)/g,'comment':'"I" should always be capitalized, but an error was found in your essay where it was not capitalized.'},
+      {'re':/(\si\s)/g,'comment':'"I" should always be capitalized, but an error was found in your essay where it was not capitalized.','name':'I not capitalized'},
 // its problems
-      {'re':/(\bits going\b)/gi,'comment':'Make sure to use its appropriately, it\'s is a contraction of it and is while its shows possession.'},
-      {'re':/(\bits supposed\b)/gi,'comment':'Make sure to use its appropriately, it\'s is a contraction of it and is while its shows possession.'},
-      {'re':/(\bits time to\b)/gi,'comment':'Make sure to use its appropriately, it\'s is a contraction of it and is while its shows possession.'},
-      {'re':/(\bits there\b)/gi,'comment':'Make sure to use its appropriately, it\'s is a contraction of it and is while its shows possession.'},
-      {'re':/(\bby it's\b)/gi,'comment':'Make sure to use its appropriately, it\'s is a contraction of it and is while its shows possession.'},
-      {'re':/(\bfor it's\b)/gi,'comment':'Make sure to use its appropriately, it\'s is a contraction of it and is while its shows possession.'},
-      {'re':/(\blost it's\b)/gi,'comment':'Make sure to use its appropriately, it\'s is a contraction of it and is while its shows possession.'},
-      {'re':/(\bits'\b)/gi,'comment':'Make sure to use its appropriately, it\'s is a contraction of it and is while its shows possession.'},
+      {'re':/(\bits going\b)/gi,'comment':'Make sure to use its appropriately, it\'s is a contraction of it and is while its shows possession.','name':'Wrong its-its going'},
+      {'re':/(\bits supposed\b)/gi,'comment':'Make sure to use its appropriately, it\'s is a contraction of it and is while its shows possession.','name':'Wrong its'},
+      {'re':/(\bits time to\b)/gi,'comment':'Make sure to use its appropriately, it\'s is a contraction of it and is while its shows possession.','name':'Wrong its'},
+      {'re':/(\bits there\b)/gi,'comment':'Make sure to use its appropriately, it\'s is a contraction of it and is while its shows possession.','name':'Wrong its'},
+      {'re':/(\bby it's\b)/gi,'comment':'Make sure to use its appropriately, it\'s is a contraction of it and is while its shows possession.','name':'Wrong it\'s'},
+      {'re':/(\bfor it's\b)/gi,'comment':'Make sure to use its appropriately, it\'s is a contraction of it and is while its shows possession.','name':'Wrong it\'s'},
+      {'re':/(\blost it's\b)/gi,'comment':'Make sure to use its appropriately, it\'s is a contraction of it and is while its shows possession.','name':'Wrong it\'s'},
+      {'re':/(\bits'\b)/gi,'comment':'Make sure to use its appropriately, it\'s is a contraction of it and is while its shows possession.','name':'Wrong it\'s'},
 
 // effect vs affect
       {'re':/(\ban? effect\b)/gi,'comment':'Remember, effect is a noun and affect is a verb.'},
