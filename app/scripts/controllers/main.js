@@ -24,11 +24,6 @@ var Error = function (re,comment) {
 	this.comment= comment || 'My Comment';
 }
 
-var CommentsObj = [];
-$.getJSON("scripts/controllers/comments.json", function(json) {
-		CommentsObj = json;
-    console.log('objects loaded',json.length); // this will show the info it in firebug console
-});
 
 /**
  * @ngdoc function
@@ -40,10 +35,22 @@ $.getJSON("scripts/controllers/comments.json", function(json) {
 
 angular.module('essayMarkupV1App')
   .controller('MainCtrl', function ($scope, Data, Grade) {
-  	//shared data
+
+    $scope.comments = JSON.parse(localStorage.getItem('allComments'));
+    if ($scope.comments.length<2) {
+      // load from file storage
+      $.getJSON("scripts/controllers/comments.json", function(json) {
+      		$scope.comments = json;
+          console.log('objects loaded',json.length); // this will show the info it in firebug console
+          localStorage.setItem('allComments', JSON.stringify($scope.comments));
+      });
+      // save to local storage
+      console.log($scope.comments);
+    }
+  
+    //shared data
     $scope.text = Data.text;
     // Object to hold all comments
-    $scope.comments = CommentsObj;
     $scope.myComments = [];
 
     //TODO allow custom functions to be inserted and run
@@ -53,11 +60,15 @@ angular.module('essayMarkupV1App')
         $scope.sectionNames.push(comment.category);
       } 
     });
-    $scope.newSection = $scope.sectionNames[0];
-    $scope.newSelectedComment='A New Comment';
-    $scope.allNewComments = [$scope.newSelectedComment];
+    $scope.newComment={};
+    $scope.newComment.section = $scope.sectionNames[0];    
+    $scope.newComment.selectedComment='A New Comment';
+    $scope.newComment.comments = [$scope.newComment.selectedComment];
     $scope.addAllNewComment = function(comment) {
-      $scope.allNewComments.push(comment);
+      $scope.newComment.comments.push(comment);
+    }
+    $scope.addToComments = function(comment) {
+      $scope.comments.push(comment);
     }
 
 
@@ -71,6 +82,9 @@ angular.module('essayMarkupV1App')
     //TODO mobile small devices layout
 
     //TODO add custom comment insert
+
+    // Words Seperated by commas or spaces the computer HAS to find somewhere in the text
+    $scope.keyWords = '';
 
     //TODO improve filter
     $scope.filtered = function(text) {
@@ -94,8 +108,7 @@ angular.module('essayMarkupV1App')
 
 
     $scope.addComment = function(comment, idx) {
-    	// find index for comment, assign it to comment id
-    	comment.id = $scope.comments.indexOf(comment);
+    	// find index for comment, assign it to comment id    	comment.id = $scope.comments.indexOf(comment);
     	// remove comment from list 
     	$scope.comments.splice(comment.id,1);
     	// var comment = comment;
@@ -280,6 +293,13 @@ angular.module('essayMarkupV1App')
      ],
    },
   ];
+
+  // set categories
+  $scope.newComment.category = $scope.categories[0].name;
+
+
+
+
   $scope.getTotal =  function(){
     var total = 0;
     for(var i = 0; i < $scope.categories.length; i++){
