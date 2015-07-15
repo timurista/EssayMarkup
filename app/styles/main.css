@@ -9,6 +9,17 @@ body {
   padding: 0;
 }
 
+/*textarea*/
+.my-small-area .ta-editor{
+    height: 400px;
+}
+
+/*error*/
+.inline-error {
+  text-decoration: line-through;
+}
+
+
 /* Everything but the jumbotron gets side spacing for mobile first views */
 /*.header,
 .marketing,
@@ -104,7 +115,16 @@ ul
 
 }
 
+/* paper text */
+.paper-text {
+  text-indent: 50px;
+  line-height: 200%;
+  padding: 30px;
+}
+
 /* Main Toggle Button */
+
+/*printing*/
 
 
 
@@ -131,3 +151,10 @@ ul
     border-bottom: 0;
   }
 }
+
+/*print media*/
+@media print {
+  .paper {page-break-after: always;}
+  .options {visibility:hidden;}
+}
+/**/

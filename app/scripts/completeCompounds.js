@@ -7,6 +7,7 @@ fb.name='Needed Identifier to Balance Sentence (who, whom, etc.)';
 fb.category = 'Grammar and Spelling';
 fb.grade = function(text) {
 	fb.text = text;
+	// returns the filtered sentences for parallelism
 	return fb.sentences().textOnly.filter( function(sent) {
 		pat = /(who.+or\s(?!who))/g;
 		if (sent.match(pat)) {

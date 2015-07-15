@@ -43,6 +43,10 @@ module.exports = function(config) {
       'bower_components/textAngular/dist/textAngularSetup.js',
       'bower_components/angular-mocks/angular-mocks.js',
       'bower_components/ngstorage/ngStorage.js',
+      'bower_components/ngtoast/dist/ngToast.js',
+      'bower_components/tabletop/src/tabletop.js',
+      'bower_components/underscore/underscore.js',
+      'bower_components/backbone/backbone.js',
       // endbower
       "app/scripts/**/*.js",
       "test/mock/**/*.js",

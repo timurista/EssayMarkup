@@ -13,6 +13,12 @@ Array.prototype.randomElement = function () {
     return this[Math.floor(Math.random() * this.length)]
 }
 
+var toJSONSTRING = function(data) {
+  var url = 'data:text/json;charset=utf8,' + encodeURIComponent(data);
+  window.open(url, '_blank');
+  window.focus();
+}
+
 // class for adding comments
 var Comment = function(name,points) {
 	this.name=name || '';
@@ -24,6 +30,12 @@ var Error = function (re,comment) {
 	this.comment= comment || 'My Comment';
 }
 
+var FeedbackItem = function (cmt, example) {
+  console.log(cmt, example);
+  var self = this;
+  self.comment = cmt || '';
+  self.example = example || '';
+}
 
 /**
  * @ngdoc function
@@ -36,6 +48,12 @@ var Error = function (re,comment) {
 angular.module('essayMarkupV1App')
   .controller('MainCtrl', function ($scope, Data, Grade) {
 
+    // instaniate graded papers
+    $scope.papers = localStorage.getItem('papers') || [];
+    $scope.papers = $scope.papers.length ? JSON.parse($scope.papers):[];
+    console.log($scope.papers);
+
+    // instantiate comments
     $scope.comments = JSON.parse(localStorage.getItem('allComments'));
     if ($scope.comments.length<2) {
       // load from file storage
@@ -47,11 +65,16 @@ angular.module('essayMarkupV1App')
       // save to local storage
       console.log($scope.comments);
     }
+    // filter
+    $scope.filter = "";
   
     //shared data
     $scope.text = Data.text;
     // Object to hold all comments
     $scope.myComments = [];
+    $scope.title = '';
+    $scope.studentName = '';
+    $scope.studentGroup = '';
 
     //TODO allow custom functions to be inserted and run
     $scope.sectionNames = [];
@@ -61,15 +84,37 @@ angular.module('essayMarkupV1App')
       } 
     });
     $scope.newComment={};
-    $scope.newComment.section = $scope.sectionNames[0];    
+    $scope.selectedCommentID = 0;
+    $scope.newComment.section = $scope.sectionNames[0];
     $scope.newComment.selectedComment='A New Comment';
     $scope.newComment.comments = [$scope.newComment.selectedComment];
     $scope.addAllNewComment = function(comment) {
       $scope.newComment.comments.push(comment);
     }
     $scope.addToComments = function(comment) {
-      $scope.comments.push(comment);
+      if ($scope.comments.indexOf(comment)<0) {
+        $scope.comments.push(comment);        
+      }
+      else {
+        alert('Warning! Duplicates cannot be saved!');
+      }
     }
+    $scope.$watch('newComment.selectedComment', function(val) {
+      $scope.newComment.comments[$scope.selectedCommentID] = val;
+    });
+    $scope.setCommentID = function(idx) {
+      $scope.selectedCommentID=idx; 
+      $scope.newComment.selectedComment=$scope.newComment.comments[idx];
+    }
+    $scope.removeNewComment = function(idx) {
+
+      $scope.newComment.comments.splice(idx,1);
+
+      // set selected comment to new ID or to nothing
+      // $scope.newComment.selectedComment = $scope.newComment.comments[$scope.selectedCommentID] || '';
+    }
+
+    
 
 
 
@@ -180,9 +225,9 @@ angular.module('essayMarkupV1App')
   $scope.feedback = [];
   $scope.totalPoints = 300;
   $scope.catLen = 5;
-  $scope.getDefValue = function() {return $scope.totalPoints/$scope.catLen};
+  $scope.getDefValue = function() {return $scope.totalPoints*1.0/$scope.catLen};
   $scope.defValue = $scope.getDefValue();
-  $scope.getDecreaseBy = function() {return Math.ceil(($scope.totalPoints/$scope.catLen)*.1)};
+  $scope.getDecreaseBy = function() {return (($scope.totalPoints*1.0/$scope.catLen)*.1)};
   $scope.decreaseBy = $scope.getDecreaseBy();
   $scope.getWordCount = function () {
   	return $scope.text.match(/(\w)+/gi).length};
@@ -197,105 +242,27 @@ angular.module('essayMarkupV1App')
   	$scope.totalPoints = $scope.defValue*$scope.catLen;
   });
 
-  $scope.categories = [
-    {'name': 'Grammar and Spelling',
-     'value':$scope.defValue,
-     'errors':[
-      {'re':/(\si\s)/g,'comment':'"I" should always be capitalized, but an error was found in your essay where it was not capitalized.','name':'I not capitalized'},
-// its problems
-      {'re':/(\bits going\b)/gi,'comment':'Make sure to use its appropriately, it\'s is a contraction of it and is while its shows possession.','name':'Wrong its-its going'},
-      {'re':/(\bits supposed\b)/gi,'comment':'Make sure to use its appropriately, it\'s is a contraction of it and is while its shows possession.','name':'Wrong its'},
-      {'re':/(\bits time to\b)/gi,'comment':'Make sure to use its appropriately, it\'s is a contraction of it and is while its shows possession.','name':'Wrong its'},
-      {'re':/(\bits there\b)/gi,'comment':'Make sure to use its appropriately, it\'s is a contraction of it and is while its shows possession.','name':'Wrong its'},
-      {'re':/(\bby it's\b)/gi,'comment':'Make sure to use its appropriately, it\'s is a contraction of it and is while its shows possession.','name':'Wrong it\'s'},
-      {'re':/(\bfor it's\b)/gi,'comment':'Make sure to use its appropriately, it\'s is a contraction of it and is while its shows possession.','name':'Wrong it\'s'},
-      {'re':/(\blost it's\b)/gi,'comment':'Make sure to use its appropriately, it\'s is a contraction of it and is while its shows possession.','name':'Wrong it\'s'},
-      {'re':/(\bits'\b)/gi,'comment':'Make sure to use its appropriately, it\'s is a contraction of it and is while its shows possession.','name':'Wrong it\'s'},
+// FEEDBACK CATEGORIES
+  $scope.categories = CATS;
+  $scope.newComment.category = $scope.categories[0].name || null;
+  $scope.customErrCategory=$scope.categories[0].name;
 
-// effect vs affect
-      {'re':/(\ban? effect\b)/gi,'comment':'Remember, effect is a noun and affect is a verb.','name':'Effect vs Affect'},
-      {'re':/(\b\w+ effects (the|an|a)\b)/gi,'comment':'Remember, effect is a noun and affect is a verb.','name':'Effect vs Affect'},
-// piece vs peace
-      {'re':/(\bpeaces? of \w+)/gi,'comment':'Remember, piece refers to a part of something while peace is a state of calmness.','name':"Piece vs Peace"},
-// their vs there
-      {'re':/(\bTheir are \w+)/gi,'comment':'Remember, their is for possession while there is for making statements.','name':'There vs Their'},
-      {'re':/(\bis there \w+)/gi,'comment':'Remember, their is for possession while there is for making statements.','name':'There vs Their'},
-      {'re':/(\bits theres\w+)/gi,'comment':'Remember, their is for possession while there is for making statements.','name':'There vs Their'},
-      {'re':/(\bto there \w+)/gi,'comment':'Remember, their is for possession while there is for making statements.','name':'There vs Their'},
+  // $scope.categories = JSON.parse(localStorage.getItem('allCategories'));
+  //   if (!$scope.categories) {
+  //     console.log($scope.categories);
+  //     // load from file storage
+  //     $scope.categories = CATS;
 
-// compound words
-      {'re':/(\bbed room\b)/gi,'comment':'Compound words such as bedroom and others should be one words not split into two.','name':'Compound Words'},
-      {'re':/(\bsnow flake\b)/gi,'comment':'Compound words such as bedroom and others should be one words not split into two.','name':'Compound Words'},
+  //     // save to local storage
+  //     localStorage.setItem('allCategories', JSON.stringify($scope.categories));
+  //     console.log($scope.categories);
+  //   }
 
-// mechanics issues
-      {'re':/(\ba [aeio]\w+)/gi,'comment':'Remember, use an before words that begin with vowels.','name':'Missing an before vowel'},
-      {'re':/(\w{4,}\.\s* [a-z]\w+)/g,'comment':'Capitalization is a problem in this essay.'},
-      {'re':/(\w+[A-Z]\w{4,})/g,'comment':'Avoid all caps in your essay, even if you are citing a web source.'},
+  
 
-// subject verb agreement
-      {'re':/(\bdifferences are\b)/g,'comment':'Remember pluarl subjects take a singular verb.'},
-      {'re':/(\beveryone were\b)/g,'comment':'Remember pluarl subjects take a singular verb.'},
-      {'re':/(\beveryone are\b)/g,'comment':'Remember pluarl subjects take a singular verb.'},
-      {'re':/(\banyone are\b)/g,'comment':'Remember pluarl subjects take a singular verb.'},
-      {'re':/(\bsomeone are\b)/g,'comment':'Remember pluarl subjects take a singular verb.'},
-      {'re':/(\banyone are\b)/g,'comment':'Remember pluarl subjects take a singular verb.'},
-      {'re':/(\bherd are\b)/g,'comment':'Remember pluarl subjects take a singular verb.'},
-      {'re':/(\bpack are\b)/g,'comment':'Remember pluarl subjects take a singular verb.'},
-      {'re':/(\bswarm are\b)/g,'comment':'Remember pluarl subjects take a singular verb.'},
-      {'re':/(\bflock are\b)/g,'comment':'Remember pluarl subjects take a singular verb.'},
-      {'re':/(\bgroup are\b)/g,'comment':'Remember pluarl subjects take a singular verb.'},
-      {'re':/(\bbunch are\b)/g,'comment':'Remember pluarl subjects take a singular verb.'},
-      {'re':/(\bcrowd are\b)/g,'comment':'Remember pluarl subjects take a singular verb.'},
-
-// whose as contraction
-      {'re':/(\bwho's money\b)/g,'comment':'Use too for when you want to say overly or also and to a preposition.'},
-      {'re':/(\bwho's life\b)/g,'comment':'Use too for when you want to say overly or also and to a preposition.'},
-
-// fewer vs less
-      {'re':/(\b\w+ less \w+[eni]s\b)/g,'comment':'Use less when your writing about a continous quantity and fewer when you are writing about multiple items.'},
-
-// too vs to
-      {'re':/(\b\w+ to many \w+)/g,'comment':'Use too for when you want to say overly or also and to a preposition.'},
-      {'re':/(\b\w+ to few \w+)/g,'comment':'Use too for when you want to say overly or also and to a preposition.'},
-      {'re':/(\b\w+ to small \w+)/g,'comment':'Use too for when you want to say overly or also and to a preposition.'},
-      {'re':/(\b\w+ to big \w+)/g,'comment':'Use too for when you want to say overly or also and to a preposition.'},
-      {'re':/(\b\w+ to little \w+)/g,'comment':'Use too for when you want to say overly or also and to a preposition.'},
-
-     ],
-   },
-    {'name': 'Ideas and Content',
-     'value': $scope.defValue,
-     'errors':[
-      {'re':/(\bstuffs?\b)/gi,'comment':'Your language is at times not specific which causes some of your ideas to fall flat. Use clear transitions and specific language instead of "stuff" to capture your main points.'},
-      {'re':/(\bthings?\b)/gi,'comment':'Make sure to use specific language instead of "thing" to capture your main points.'},
-     ],
-   },
-    {'name': 'Organization',
-     'value': $scope.defValue,
-     'errors':[
-      {'re':/(\bi think)/gi,'comment':'Get into the habbit of organizing your thoughts without using I think.'},
-     ],
-   },
-    {'name': 'Style and Word Choice',
-     'value': $scope.defValue,
-     'errors':[
-     {'re':/(i believe)/gi,'comment':'Some style and word choice errors.'},
-     {'re':/(a\s*lot)/gi,'comment':'Rather than using vague language such as "alot", you such be more specific with your example and overall language.',},
-     {'re':/(\bvery\s*\w+)/gi,'comment':'Try to find words or specific adjectives that capture what exactly you are trying to say instead of using two word phrases with modifiers like "very" to hold up weak adjectives.',},
-
-     ],
-   },
-    {'name': 'Documentation and Evidence',
-     'value': $scope.defValue,
-     'errors':[
-     //{'re':/()/gi,'comment':'Some Documentation errors.'},
-     {'re':/(Wikipedia)/gi,'comment':'Avoid citing wikipedia directly and instead only reference the sources that wikipedia points to.'},
-     ],
-   },
-  ];
 
   // set categories
-  $scope.newComment.category = $scope.categories[0].name;
+  // if $scope.categories)
 
 
 
@@ -359,14 +326,13 @@ angular.module('essayMarkupV1App')
     //figure out final feedback
     if ($scope.getTotal()>$scope.totalPoints*.8) {
       console.log($scope.randomComplement())
-      $scope.feedback.push($scope.randomComplement());
+      $scope.feedback.push(new FeedbackItem($scope.randomComplement()));
     } 
     else if ($scope.getTotal()>$scope.totalPoints*.6) {
-      $scope.feedback.push($scope.randomGoodJob());
+      $scope.feedback.push(new FeedbackItem($scope.randomGoodJob()));
     } else {
-      $scope.feedback.push($scope.randomNeedsWork());
-      console.log($scope.randomNeedsWork(),$scope.feedback)
-    };
+      $scope.feedback.push(new FeedbackItem($scope.randomNeedsWork()));
+   };
     return
   }
   $scope.gradeCategory = function (str,category,errors) {
@@ -385,7 +351,7 @@ angular.module('essayMarkupV1App')
       // iterate over matches
       if (matches) {
         // append comments
-        $scope.feedback.push(comment+' (EX: '+matches[0]+')');
+        $scope.feedback.push(new FeedbackItem(comment,matches[0]));
         // deduct points
         category.value -= $scope.decreaseBy;
       }
@@ -405,7 +371,7 @@ angular.module('essayMarkupV1App')
       $scope.categories[4].value -= $scope.decreaseBy;
       // check if less than 0
       if ($scope.categories[4].value<0) {$scope.categories[4].value=0}
-      $scope.feedback.push("You could have included more citations and evidence to support your claims for this assignment");
+      $scope.feedback.push(new FeedbackItem("You could have included more citations and evidence to support your claims for this assignment"));
     }
 
   }
@@ -421,7 +387,7 @@ angular.module('essayMarkupV1App')
           $scope.categories[i].value-=deduct; 
         };
       };
-      $scope.feedback.push('You could have included more critical thinking and reflection on the topic');
+      $scope.feedback.push(new FeedbackItem('You could have included more critical thinking and reflection on the topic'));
       // get category object
   }
 
@@ -463,7 +429,6 @@ angular.module('essayMarkupV1App')
 
    // Testing the Regex finder
   $scope.highlightErrors = function (regEx) {
-	    console.log($scope.text);
 	  	$scope.text = $scope.text.replace(/(<span class="e">|<\/span>)/igm, "");
 	    try {
 	    	if (regEx.length) {
@@ -474,11 +439,9 @@ angular.module('essayMarkupV1App')
 			catch(e) {
 		  	$scope.text = $scope.text.replace(/(<span class="e">|<\/span>)/igm, "");
 			}
-	    console.log($scope.text);
 	};
 
   $scope.customError = new Error();
-  $scope.customErrCategory=$scope.categories[0].name;
 
   $scope.$watch('customError.re', function() {
   	try {
@@ -490,15 +453,42 @@ angular.module('essayMarkupV1App')
   	}
   });
 
+  // as categories change, modify the existing values not to be too low
   $scope.$watch('categories', function() {
   	$scope.categories.forEach( function(obj) {
   		obj.value = (obj.value<0) ? 0: obj.value;
   	});
   });
+  $scope.saveGradedPaper = function() {
+    var paper = {
+      text:$scope.text,
+      title:$scope.title,
+      myComments:$scope.myComments,
+      myFeedback:$scope.feedback,
+      categories:$scope.categories,
+      studentName:$scope.studentName,
+      studentGroup:$scope.studentGroup,
+      totalPoints:$scope.totalPoints,
+      decreaseBy:$scope.decreaseBy,
+    }
+    $scope.papers.push(paper);
+    localStorage.setItem('papers',JSON.stringify($scope.papers));
+  }
 
-  //TODO categories shown at bottom with grade
+  $scope.resetGradedPapers = function() {
+    if (confirm('This will remove all paper data, are you sure you want to?')) {
+      $scope.papers = [];
+      localStorage.setItem('papers',JSON.stringify($scope.papers));
+    }
 
-  //TODO after student types, submit report
-  $scope.filter = "";
+  }
+
+  // $scope.generateGradedReport = function() {
+
+  // }
+
+
+
+
   
 });
