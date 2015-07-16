@@ -178,9 +178,15 @@
       </div>
       <hr>
       <div class="row">
-        <div class="col-sm-12">
+        <div class="col-sm-6">
+          <span class="btn btn-default btn-file">
+              <strong>Upload CSV file</strong> 
+              <input type="file" id="csvfile" accept="csv">
+          </span>
+        </div>
+        <div class="col-sm-6">
           <h2>Batch Grading</h2>
-          <button class="btn btn-group btn-warning">TODO: Batch Grading from Google Speadsheet</button>
+          <button class="btn btn-group btn-warning" ng-click="gradePapersFromCSV('csv')">Grade Papers From CSV</button>
         </div>
       </div>
       <div class="row">

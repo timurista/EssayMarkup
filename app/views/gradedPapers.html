@@ -67,7 +67,7 @@
 		        <tr>
 		          <td>Final Grade</td>
 		          <td></td>
-		          <td ng-init="myTotal=getTotal(paper.categories)"><strong>{{myTotal.toFixed(1)}} / {{paper.totalPoints}} - {{
+		          <td ng-init="myTotal=paper.total"><strong>{{myTotal.toFixed(1)}} / {{paper.totalPoints}} - {{
 		          	(myTotal/paper.totalPoints)*100 | number:1}}% 
 		          	{{getGrade(myTotal,paper.totalPoints)}}
 

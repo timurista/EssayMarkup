@@ -5,8 +5,13 @@
     <title></title>
     <meta name="description" content="">
     <meta name="viewport" content="width=device-width">
+    <!-- Link to csv -->
+
+
+
     <!-- Place favicon.ico and apple-touch-icon.png in the root directory -->
     <!-- build:css(.) styles/vendor.css -->
+
     <link rel="stylesheet" href="bower_components/bootstrap/dist/css/bootstrap.css" />
     <!-- bower:css -->
     <link rel="stylesheet" href="bower_components/font-awesome/css/font-awesome.css" />
@@ -93,17 +98,17 @@
     <script src="bower_components/textAngular/dist/textAngular.js"></script>
     <script src="bower_components/textAngular/dist/textAngular-sanitize.js"></script>
     <script src="bower_components/textAngular/dist/textAngularSetup.js"></script>
-
-    <!-- backbonejs -->
-    <script src="bower_components/tabletop/src/tabletop.js"></script>
-
-
-
-
     <!-- endbower -->
     <!-- endbuild -->
 
         <!-- build:js({.tmp,app}) scripts/scripts.js -->
+        
+        <!-- helpers -->
+        <scirpt src="scripts/jquery.csv-0.71.min.js"></script>
+        <script src="scripts/csvHelper.js"></script>
+        <script src="scripts/gradeEssay.js"></script>
+
+
 
         <script src="scripts/app.js"></script>
         <script src="scripts/GradeService.js"></script>

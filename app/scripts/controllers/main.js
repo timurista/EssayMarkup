@@ -31,7 +31,7 @@ var Error = function (re,comment) {
 }
 
 var FeedbackItem = function (cmt, example) {
-  console.log(cmt, example);
+  // console.log(cmt, example);
   var self = this;
   self.comment = cmt || '';
   self.example = example || '';
@@ -107,11 +107,7 @@ angular.module('essayMarkupV1App')
       $scope.newComment.selectedComment=$scope.newComment.comments[idx];
     }
     $scope.removeNewComment = function(idx) {
-
       $scope.newComment.comments.splice(idx,1);
-
-      // set selected comment to new ID or to nothing
-      // $scope.newComment.selectedComment = $scope.newComment.comments[$scope.selectedCommentID] || '';
     }
 
     
@@ -309,8 +305,6 @@ angular.module('essayMarkupV1App')
     console.log(words);
     console.log(twoWords);
 
-    console.log($scope.categories);
-
     // TODO: find repeated phrases or words
     var decreaseBy = 10;
 
@@ -340,7 +334,6 @@ angular.module('essayMarkupV1App')
       var err = errors[i];
       // break if toggled off
       if (!err.on) {break;}
-
 
       var re = err.re;
       var comment = err.comment;
@@ -483,11 +476,70 @@ angular.module('essayMarkupV1App')
 
   }
 
-  // $scope.generateGradedReport = function() {
+  // get grades
+  $scope.gradePapersFromCSV = function(csv) {
+    var myfile = $("#csvfile")[0].files[0];
+        
+    if(!myfile){
+        alert("No file selected.");
+        return;
+    } else {
+      var csv = "";
+      var reader = new FileReader();
+      reader.onload = function(e) {
+        var data = e.target.result;
+        $scope.autoGradeCSVPapers(data);
+      };
+      reader.readAsText(myfile);
+    }
+    // $.ajax({
+    //     type: "GET",
+    //     url: "res/csv/Copy of Week 6 Giver Essay (Responses) - Form Responses 1.csv",
+    //     dataType: "text",
+    //     success: function(csv) {
+    //       $scope.autoGradeCSVPapers(csv);},
+    //     error: function(err) {console.log(err);}
+    //  });
+  };
+  $scope.autoGradeCSVPapers = function(csv) {
+    var arr = CSVToArray(csv,',');
+    console.log(arr,arr.length)
+    var graded = $scope.gradePapers(arr);
+    localStorage.setItem('papers',JSON.stringify($scope.papers.concat(graded)));
+    console.log('saved all those papers.. heck yeah!');
+  }
 
-  // }
+  $scope.gradePapers = function(arr) {
+    var graded = [];
+    arr.forEach( function(paper) {
+      var paperObj ={
+        'timestamp':paper[0],
+        'studentName':paper[1],
+        'title':paper[2],
+        'text':paper[3],
+        'documentation':paper[4],
+      }
+      // if paper has more than 5 entries, we will assume last entry is the student group
+      paperObj['studentGroup'] = (paper.length>5)? paper[5]:'Not Displayed';
+      paperObj['myFeedback']=[];
+      paperObj['myComments']=[];
+      paperObj['categories']=$scope.categories.slice();
+      paperObj['totalPoints']=$scope.totalPoints;
+      paperObj['decreaseBy']=$scope.decreaseBy;
+      paperObj['total']=0;
+      paperObj['defValue']=$scope.defValue;
+      paperObj['wc']=$scope.wc();
+      paperObj['minLength']=$scope.minLength;
+      paperObj['keyWords']=$scope.keyWords;
+      // grades the essay for the paperObject
+      // doesn't not return anything but updates myFeedback
+      gradeEssay(paperObj);
+      graded.push(paperObj);
+    });
+    console.log(graded);    
+    return graded;
 
-
+  }
 
 
   
