@@ -1,0 +1,39 @@
+<!-- shows all autograding options  -->
+<div class="myComments">
+  <p>This is a list of all the autograding errors. Each error is a regular expression with a comment associated with it. You can toggle these errors on or off for use when autograding.</p>
+  <ul ng-repeat="category in categories" class="">
+    <h3>{{category.name}}
+    </h3>
+    <button class="btn btn-secondary" ng-click="addError(category)">Add new Error</button>
+    <li ng-repeat="error in category.errors" class="card">
+      <div class="row">
+        <div class="col-md-2">
+          <!-- toggle button error -->
+          <button ng-init="error.on=true" ng-model="error.on" ng-click="error.on=!error.on" ng-class="{'btn tgl-on':error.on, 'btn tgl-off':!error.on}">
+            {{error.on ? 'On':'Off'}}
+          </button>
+        </div>
+        <div class="col-sm-10" ng-click="errorShow=!errorShow">
+          #{{$index+1}} - {{error.name | limitTo: 70 }}{{error.name.length > 70 ? '&hellip;' : ''}} 
+        </div>
+      </div>
+      <div class="row" ng-show="errorShow">
+        <div class="col-md-5">
+          <span>#{{$index+1}} - </span>
+          <label>RegEx</label>
+          <textarea class="form-control" ng-model="error.re"></textarea>
+          
+        </div>
+        <div class="col-md-7">
+          <label>Comment</label>
+          <textarea class="form-control" ng-model="error.comment"></textarea>
+        </div>             
+      </div>
+      <div class="row" ng-show="errorShow">
+        <div class="col-md-2 pull-right">
+          <button class="btn btn-remove" align="center" ng-click="removeError(category,error)">X</button>
+        </div>
+      </div>
+    </li>
+  </ul>  
+</div>

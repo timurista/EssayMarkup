@@ -1,4 +1,17 @@
 'use strict';
+// instantiate object
+var loadObj = function(name,defValue) {
+  var obj = localStorage.getItem(name) || [];
+  if (obj.length) {
+    return JSON.parse(obj);
+  }
+  else {
+    localStorage.setItem(name,JSON.stringify(defValue));
+    obj = defValue;
+    return obj;
+  }
+}
+
 // find by name
 var findByName = function(Objects, Name) {
     for (var i = 0, len = Objects.length; i < len; i++) {
@@ -37,6 +50,8 @@ var FeedbackItem = function (cmt, example) {
   self.example = example || '';
 }
 
+
+
 /**
  * @ngdoc function
  * @name essayMarkupV1App.controller:MainCtrl
@@ -46,43 +61,84 @@ var FeedbackItem = function (cmt, example) {
  */
 
 angular.module('essayMarkupV1App')
-  .controller('MainCtrl', function ($scope, Data, Grade) {
+  .controller('MainCtrl', function ($scope, Data, Grade, $localStorage) {
+    // saving storage ability
+    $scope.$storage = $localStorage;
 
-    // instaniate graded papers
-    $scope.papers = localStorage.getItem('papers') || [];
-    $scope.papers = $scope.papers.length ? JSON.parse($scope.papers):[];
-    console.log($scope.papers);
+    //instantiate comments using ngstorage    
+    $scope.$storage = $localStorage.$default({
+        allComments: [], 
+        sPaper: {
+          'timestamp':Date.now(),
+          'studentName':'',
+          'title':'',
+          'text':Data.text,
+          'documentation':'',
+          'studentGroup':'',
+          'myFeedback':[],
+          'myComments':[],
+          'categories':CATS, // a global categories listing
+          'totalPoints':300,
+          'decreaseBy':6,
+          'total':300,
+          'defValue':60,
+          'getWC':0,
+          'minLength':'',
+          'keyWords':''
+        },
+
+    });
 
     // instantiate comments
-    $scope.comments = JSON.parse(localStorage.getItem('allComments'));
-    if ($scope.comments.length<2) {
-      // load from file storage
+    $scope.comments = $scope.$storage.allComments;
+    if ($scope.$storage.allComments.length<1) {
       $.getJSON("scripts/controllers/comments.json", function(json) {
-      		$scope.comments = json;
+        // load if the there are no comments
           console.log('objects loaded',json.length); // this will show the info it in firebug console
-          localStorage.setItem('allComments', JSON.stringify($scope.comments));
-      });
-      // save to local storage
-      console.log($scope.comments);
+          $scope.$storage.allComments = json;
+          console.log($scope.$storage);
+          // push categories
+          $scope.comments.forEach( function(comment) {
+            if ($scope.sectionNames.indexOf(comment.category)<0) {
+              $scope.sectionNames.push(comment.category);
+            } 
+          });
+        });
     }
+
+    // load paper
+    $scope.myPaper = $scope.$storage.sPaper;
+
+    console.log('Comments',$scope.comments,$scope.$storage.allComments);
+
     // filter
     $scope.filter = "";
+
+    $scope.categories = CATS;
+
+    $scope.getTotal =  function(categories){
+      var total = 0;
+      for(var i = 0; i < categories.length; i++){
+          var cat = categories[i];
+          total += cat.value;
+      }
+      return total;
+    };
+
   
     //shared data
-    $scope.text = Data.text;
+    $scope.feedback = $scope.myPaper.myFeedback;
+    $scope.text = $scope.myPaper.text;
     // Object to hold all comments
-    $scope.myComments = [];
-    $scope.title = '';
-    $scope.studentName = '';
-    $scope.studentGroup = '';
+    $scope.myComments = $scope.myPaper.myComments;
+    $scope.title = $scope.myPaper.title;
+    $scope.studentName = $scope.myPaper.studentName;
+    $scope.studentGroup = $scope.myPaper.studentGroup;
+    $scope.keyWords = $scope.myPaper.keyWords;
 
     //TODO allow custom functions to be inserted and run
     $scope.sectionNames = [];
-    $scope.comments.forEach( function(comment) {
-      if ($scope.sectionNames.indexOf(comment.category)<0) {
-        $scope.sectionNames.push(comment.category);
-      } 
-    });
+
     $scope.newComment={};
     $scope.selectedCommentID = 0;
     $scope.newComment.section = $scope.sectionNames[0];
@@ -110,43 +166,23 @@ angular.module('essayMarkupV1App')
       $scope.newComment.comments.splice(idx,1);
     }
 
-    
-
-
-
-    //TODO print to other screen option
-
     //TODO allow saving and caching resources
 
     //TODO stylize elements
 
     //TODO mobile small devices layout
 
-    //TODO add custom comment insert
-
-    // Words Seperated by commas or spaces the computer HAS to find somewhere in the text
-    $scope.keyWords = '';
-
-    //TODO improve filter
-    $scope.filtered = function(text) {
-    	return text.indexOf($scope.filter)>-1;
+    $scope.numberShown = 10;
+    $scope.filteredStuff = function(filt) {
+      var filtered = $scope.comments.filter(function(obj) {
+        return (obj.subsection.toLowerCase().indexOf(filt)>-1);
+        return (obj.selectedComment.toLowerCase().indexOf(filt)>-1);
+      });
+      return filtered.slice(0, $scope.numberShown);
     }
-    $scope.filter = "";
-    //TODO filter
-    $scope.filterItems = function (arr) {
-      if ($scope.filter.length>0) {
-        return $.grep(arr, function( a ) {
-          return a.selectedComment.indexOf($scope.filter)>-1;
-        });
-      }
-      else {return arr;}
+    $scope.showMore = function() {
+      $scope.numberShown =( $scope.numberShown<$scope.comments.length) ? $scope.numberShown+5: $scope.comments.length;
     }
-    $scope.filteredStuff = $scope.filterItems($scope.comments);
-
-    // $scope.$watch('filter',function() {
-    //   $scope.filteredStuff = $scope.filterItems($scope.comments);
-    // })
-
 
     $scope.addComment = function(comment, idx) {
     	// find index for comment, assign it to comment id    	comment.id = $scope.comments.indexOf(comment);
@@ -239,7 +275,6 @@ angular.module('essayMarkupV1App')
   });
 
 // FEEDBACK CATEGORIES
-  $scope.categories = CATS;
   $scope.newComment.category = $scope.categories[0].name || null;
   $scope.customErrCategory=$scope.categories[0].name;
 
@@ -254,23 +289,8 @@ angular.module('essayMarkupV1App')
   //     console.log($scope.categories);
   //   }
 
-  
 
 
-  // set categories
-  // if $scope.categories)
-
-
-
-
-  $scope.getTotal =  function(){
-    var total = 0;
-    for(var i = 0; i < $scope.categories.length; i++){
-        var cat = $scope.categories[i];
-        total += cat.value;
-    }
-    return total;
-  };
   $scope.commentCategory = function (category) {
     if (category.value>$scope.defValue*.666) {
       return ""
@@ -294,118 +314,33 @@ angular.module('essayMarkupV1App')
   	return names;
   }
 
-  //grade essay part 1
+  //grade essay
   $scope.gradeEssay = function () {
-    // reset to normal values
-    $scope.resetValues();
-
-    // split text into words
-    var words = $scope.text.trim().match(/(\w){4,}/g);
-    var twoWords = $scope.text.trim().match(/(\w+\s+\w+)/g);
-    console.log(words);
-    console.log(twoWords);
-
-    // TODO: find repeated phrases or words
-    var decreaseBy = 10;
-
-    // word count
-    $scope.gradeContent();
-    $scope.gradeDocumentation();
-    for (var i = $scope.categories.length - 1; i >= 0; i--) {
-      var category = $scope.categories[i];
-      // grade each category and lower score appropriately
-      $scope.gradeCategory($scope.text,category,category.errors);
-    };
-
-    //figure out final feedback
-    if ($scope.getTotal()>$scope.totalPoints*.8) {
-      console.log($scope.randomComplement())
-      $scope.feedback.push(new FeedbackItem($scope.randomComplement()));
-    } 
-    else if ($scope.getTotal()>$scope.totalPoints*.6) {
-      $scope.feedback.push(new FeedbackItem($scope.randomGoodJob()));
-    } else {
-      $scope.feedback.push(new FeedbackItem($scope.randomNeedsWork()));
-   };
-    return
-  }
-  $scope.gradeCategory = function (str,category,errors) {
-    for (var i = errors.length - 1; i >= 0; i--) {
-      var err = errors[i];
-      // break if toggled off
-      if (!err.on) {break;}
-
-      var re = err.re;
-      var comment = err.comment;
-
-      //find matches
-      var matches = str.match(re);
-
-      // iterate over matches
-      if (matches) {
-        // append comments
-        $scope.feedback.push(new FeedbackItem(comment,matches[0]));
-        // deduct points
-        category.value -= $scope.decreaseBy;
-      }
-    };
-  }
-  $scope.wordCount = function () {
-    return $scope.text.match(/(\w)+/gi).length;
+    // var paper = {
+    //     'timestamp':Date.now(),
+    //     'studentName':$scope.studentName,
+    //     'title':$scope.title,
+    //     'text':$scope.text,
+    //     'documentation':'None',
+    //     'studentGroup':$scope.studentGroup,
+    //     'myFeedback':$scope.feedback,
+    //     'myComments':$scope.myComments,
+    //     'categories':$scope.categories,
+    //     'totalPoints':$scope.totalPoints,
+    //     'decreaseBy':$scope.decreaseBy,
+    //     'total':$scope.getTotal(),
+    //     'defValue':$scope.defValue,
+    //     'getWC':$scope.wc,
+    //     'minLength':$scope.minLength,
+    //     'keyWords':$scope.keyWords
+    //   }
+    gradeEssay($scope.$storage.sPaper);
+    $scope.$storage.sPaper.total = $scope.getTotal($scope.$storage.sPaper.categories);
+    // assign feedback to value
+    // $scope.feedback = $scope.$storage.sPaper.myFeedback;
+    // console.log($scope.feedback)
   }
 
-  // grade grammar and common mispellings
-
-  // grade style
-  $scope.gradeDocumentation = function (str) {
-    var re = /\((.+?)\)/gi;
-    var matches = $scope.text.match(re)
-    if (matches<5) {
-      $scope.categories[4].value -= $scope.decreaseBy;
-      // check if less than 0
-      if ($scope.categories[4].value<0) {$scope.categories[4].value=0}
-      $scope.feedback.push(new FeedbackItem("You could have included more citations and evidence to support your claims for this assignment"));
-    }
-
-  }
-  // search word count
-  $scope.gradeContent = function () {
-    if ($scope.wc()<$scope.minLength) {
-      // get score
-      var percentDiff = ($scope.wc()/$scope.minLength);
-      var deduct = Math.ceil($scope.defValue-($scope.defValue*percentDiff));
-      for (var i = $scope.categories.length - 1; i >= 0; i--) {
-        // deduct points
-        if ($scope.categories[i].value>0) {
-          $scope.categories[i].value-=deduct; 
-        };
-      };
-      $scope.feedback.push(new FeedbackItem('You could have included more critical thinking and reflection on the topic'));
-      // get category object
-  }
-
-  };
-  $scope.resetValues = function () {
-    for (var i = $scope.categories.length - 1; i >= 0; i--) {
-      $scope.categories[i].value=$scope.defValue;          
-    };
-    // reset feedback
-    $scope.feedback = [];
-  };
-  $scope.randomComplement = function () {
-    return ['Great work, you put forth a strong effort here',
-    'I enjoyed reading your essay, nice work!','Very strong effort, you clearly grasp the materials in this course.',
-    'This was a very strong essay, nice.','It was a pleasure to read this strong paper.','Your paper is very strong.'].randomElement();
-  }
-  $scope.randomGoodJob = function() {
-    return ['Overall, a good effort but there are a few errors.','You put forth effort, but this essay lacks in some crucial arreas.',
-    'Good, but perhaps more work could have gone into revising this paper or improving it.'].randomElement();
-  }
-
-  $scope.randomNeedsWork = function () {
-    return ['Unfortunately, there are some serrious flaws in this essay.',
-    'You should put forth more effort in this paper.'].randomElement();
-  }
   $scope.addValue = function (category) {
     category.value+=$scope.decreaseBy;
     if (category.value>=$scope.defValue) {category.value=$scope.defValue};
@@ -476,7 +411,7 @@ angular.module('essayMarkupV1App')
 
   }
 
-  // get grades
+  // get grades from csv file
   $scope.gradePapersFromCSV = function(csv) {
     var myfile = $("#csvfile")[0].files[0];
         
@@ -492,15 +427,8 @@ angular.module('essayMarkupV1App')
       };
       reader.readAsText(myfile);
     }
-    // $.ajax({
-    //     type: "GET",
-    //     url: "res/csv/Copy of Week 6 Giver Essay (Responses) - Form Responses 1.csv",
-    //     dataType: "text",
-    //     success: function(csv) {
-    //       $scope.autoGradeCSVPapers(csv);},
-    //     error: function(err) {console.log(err);}
-    //  });
   };
+  // ste 2 of the grading
   $scope.autoGradeCSVPapers = function(csv) {
     var arr = CSVToArray(csv,',');
     console.log(arr,arr.length)
@@ -521,24 +449,34 @@ angular.module('essayMarkupV1App')
       }
       // if paper has more than 5 entries, we will assume last entry is the student group
       paperObj['studentGroup'] = (paper.length>5)? paper[5]:'Not Displayed';
+
       paperObj['myFeedback']=[];
       paperObj['myComments']=[];
-      paperObj['categories']=$scope.categories.slice();
+      paperObj['categories']=$scope.copyObjArray($scope.categories);
       paperObj['totalPoints']=$scope.totalPoints;
       paperObj['decreaseBy']=$scope.decreaseBy;
       paperObj['total']=0;
       paperObj['defValue']=$scope.defValue;
-      paperObj['wc']=$scope.wc();
+      paperObj['getWC']=$scope.wc;
       paperObj['minLength']=$scope.minLength;
       paperObj['keyWords']=$scope.keyWords;
       // grades the essay for the paperObject
       // doesn't not return anything but updates myFeedback
       gradeEssay(paperObj);
+
       graded.push(paperObj);
     });
     console.log(graded);    
     return graded;
 
+  }
+  $scope.copyObjArray = function(arr) {
+    var newArr = [];
+    arr.forEach( function(obj) {
+      newArr.push($.extend({}, obj));
+
+    })
+    return newArr;
   }
 
 

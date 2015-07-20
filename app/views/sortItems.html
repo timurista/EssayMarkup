@@ -1,0 +1,18 @@
+<!-- options -->
+<div class="row displayOptions">
+	<h2>Options</h2>
+
+	<div class="col-sm-4" >
+		<div class="input-group-add-on" ng-repeat="header in headerKeys">
+			{{header}}				
+		</div>
+	</div>		
+	<div class="col-sm-8">
+		<ul ui-sortable ng-model="headerKeys">
+		  <li ng-repeat="header in headerKeys">
+				<span>{{$index}}</span>
+				<span>{{headerKeys[$index]}}</span>
+			</li>
+		</ul>
+	</div>	
+</div>

@@ -1,0 +1,47 @@
+<div class="row" >
+	<div class="col-sm-2">
+		<label>Current Score: {{filterScore*100}}%</label>					
+	</div>
+	<div class="col-sm-6">
+		<!-- Make sure you can see numbers on range -->
+		<input type="range" step=".1" min="0.0" max="1.0" class="form-control" ng-model="filterScore">
+	</div>				
+	<div class="col-sm-2">
+		Average: <strong>{{average() | number:1}}%</strong>
+	</div>
+	<div class="col-sm-2">
+		Results Shown: {{filteredScores(filterScore).length}}
+	</div>
+	<div class="col-sm-12 myFilteredPapers" scrolly="showMore()">
+		
+		<table class="table" >
+			<tr>
+				<th>Name</th>
+				<th>Essay</th>
+				<th>Group</th>
+				<th>Score</th>
+				<th>Grade</th>
+			</tr>
+			<tr ng-repeat="myPaper in filteredScores(filterScore)" ng-switch on="selection">
+				<td  ng-click="paper=myPaper; Show=!Show; selection=!selection; " class='btn btn-success'>{{myPaper.studentName}} </td>
+				<!-- show myPaper for grading -->
+				<td>
+					{{ myPaper.text | limitTo: 20 }}{{myPaper.text.length > 20 ? '...' : ''}}
+				</td>
+				<!-- <td ng-show="Show" ng-switch-when="true">
+					<ng-include src="'views/showPaper.html'"></ng-include>
+				</td> -->
+				<td>{{myPaper.studentGroup}}</td>
+				<td>{{myPaper.total | number:0}}</td>
+				<td> {{getGrade(myPaper.total,myPaper.totalPoints)}}</td>
+				
+			</tr>
+		</table>
+	</div>
+</div>
+<div class="row">
+	<div class="col-sm-12">
+		<!-- selected paper goes here -->
+		<ng-include src="'views/showPaper.html'"></ng-include>
+	</div>
+</div>

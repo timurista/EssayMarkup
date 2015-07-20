@@ -1,0 +1,49 @@
+<div class="card">
+    <h2 class="text-center">Create New Comment</h2>
+    <div class="row">
+    <div class="col-sm-6">
+      <span><strong>Section:</strong></span>
+      <select type="text" class="form-control" ng-model="newComment.section"  ng-options="section for section in sectionNames"></select>      
+    </div>
+    <div class="col-sm-6">
+      <span><strong>Subsection:</strong></span>
+      <input type="text" class="form-control" ng-model="newComment.subsection">
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-sm-12">
+      <label>Grading Category:</label> <select class="form-control" ng-model="newComment.category" ng-options="name for name in categoryNames()"></select>
+    </div>
+  </div>
+    <div class="row">
+      <div class="col-sm-12">
+        <label>Comments:</label>
+        <button class="btn btn-primary btn-group" ng-click="addAllNewComment('Another Comment')">+</button>              
+            <span ng-repeat="myComment in newComment.comments track by $index" >
+            <button class="btn" ng-click="setCommentID($index)" >
+              {{$index+1}}) {{myComment | limitTo: 5}}
+            </button>
+            </span> 
+              
+      </div>
+    </div>
+            
+      <div class="row">
+        <div class="col-sm-11">
+          <textarea class="form-control" ng-model="newComment.selectedComment">
+          </textarea>
+
+        </div>
+        <div class="col-sm-1">
+          <button class="btn btn-danger" ng-click="removeNewComment(selectedCommentID)">
+            X
+          </button>           
+        </div>
+      </div>
+      <div class="row" ng-show="newComment.subsection.length && newComment.selectedComment.length">
+        <div class="col-sm-12">
+          <button class="btn btn-primary" ng-click="addToComments(newComment, $index)">Add New Comment</button>  
+        </div>     
+      </div>
+    </div>
+</div>

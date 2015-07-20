@@ -1,19 +1,14 @@
-'use strict';
-
-// testing spreadsheets
-var public_spreadsheet_url = 'https://docs.google.com/spreadsheets/d/1duik-jadW1ROfFFSf73pGS8LKNE-UEDMkJdWgfydN4s/pubhtml?gid=512563130&single=true';
-var pub_key = '1duik-jadW1ROfFFSf73pGS8LKNE-UEDMkJdWgfydN4s';
-function init() {
-  Tabletop.init( { key: pub_key,
-                   callback: function(data, tabletop) { console.log(data) },
-                   simpleSheet: true } ).failure(function(error) {console.log(error)})
-}
-
-// TODO allow for editing of essays
-
 angular.module('essayMarkupV1App')
-  .controller('GPCtrl', function ($scope) {
-  	$scope.papers = JSON.parse(localStorage.getItem('papers')) || [];
+  .controller('GPReviewCtrl', function ($scope, $localStorage) {
+  	// saving storage ability
+    $scope.$storage = $localStorage;
+    $scope.papers = $scope.$storage.papers || [];
+    $scope.papers = JSON.parse(localStorage.getItem('papers'));
+    $scope.paper = $scope.papers[0];
+
+    $scope.filterScore="0.8";
+
+
   	$scope.average = function() {
   		var sum = 0;
   		$scope.papers.forEach( function(paper) {
@@ -73,15 +68,26 @@ angular.module('essayMarkupV1App')
 		$scope.roundToOne = function(num) {
 			return Math.round( num * 10) / 10;
 		}
-		$scope.filterScore="0.8";
+		
+
 
 		$scope.filteredScores = function(filter) {
 			return $scope.papers.filter( function(paper) {
 				var percent = (paper.total/paper.totalPoints).toString().match(/^\d+(?:\.\d{0,1})?/)[0];
 				// console.log(percent,filter)
 				return (percent===filter);
-			})
+			});
 		}
+
+		$scope.numberShown = 10;
+		$scope.showMore = function() {
+			$scope.numberShown+=5;
+		}
+
+		$scope.$watch('filterScore', function() {
+			$scope.numberShown = 10;
+		});
+
 
 		$scope.removeFeed = function (myFeed, feedback) {
 			console.log(feedback);
@@ -90,3 +96,4 @@ angular.module('essayMarkupV1App')
 		}
 
   });
+ 

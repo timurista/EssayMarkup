@@ -1,10 +1,5 @@
-<div class="container">
-	<div class="row paper" ng-repeat="paper in papers">
-		<!-- hiding options -->
-		<div class="row">
-		    <button class="btn btn-default options" ng-click="show=!show">Show / Hide Options</button>
-	  </div>
-
+<div class="row paper" ng-repeat="paper in papers">
+		
 		<div class="row">
 			<div class="row ">
 				 <div class="col-sm-12 text-right">
@@ -12,26 +7,50 @@
 				</div>
 			</div>
 			<div class="row">
-				 <div class="col-sm-12  text-right">
-				{{paper.studentGroup}}
-			</div>
+				<div class="col-sm-6">
+					This paper was submitted at: {{paper.timestamp}}
+				</div>
+				 <div class="col-sm-6 text-right">
+					{{paper.studentGroup}}
+				</div>
 			</div>
 			<div class="row">
-		    <div class="col-sm-12">
-		    	<h1 class="text-center">{{paper.title}}</h1>
-		    </div>				
 			</div>
 	    <div class="row">
-	    	<div class="col-sm-12 paper-text" ng-bind-html="replacedText(paper.text,paper.myFeedback)"></div>
-	    </div>
-	     
-	    <div class="row">
-	    	<div class="col-sm-12">
-	    		
-		    	<hr>
-			    <h3>
-			      Some Additional Comments
-			    </h3>
+		    			<!-- paper row -->
+	    	<div class="col-xs-8" >
+	    		<div class="row">
+			    	<div class="col-sm-12">
+				    	<h2 class="text-center" ng-model="paper.title" contentEditable="true">{{paper.title}}</h2>
+				    </div>			    			
+	    		</div>
+	    		<div class="row" >
+	    			<div class="col-sm-12 paper-text" ng-bind-html="annotatedText(paper.text,paper.myFeedback)" contentEditable="true"></div>
+	    		</div>
+	    	</div>
+
+	    	<!-- feedback -->
+
+	    	<div class="col-xs-4">
+	    		<div class="row">
+	    			<div class="col-sm-12">
+			    		<h4>Specific Feedback</h4>
+			    		<ul>
+			    			<li ng-repeat="item in paper.myFeedback" ng-show="item.example.length>0">
+			    				<p>[{{$index+1}}] {{item.comment}} (EX: {{item.example}})
+			    				<button class="btn btn-danger" ng-click="removeFeed(item, paper.myFeedback)" ng-show="show">-</button></p>
+			    			</li>
+			    		</ul>	    				
+	    			</div>
+	    		</div>
+
+	    		<!-- other feedback -->
+
+	    		<div class="row">
+	    			<div class="col-sm-12">
+			    <h4>
+			      More Comments
+			    </h4>
 			    <ul class="">
 			    	<li ng-repeat="myComment in paper.myComments track by $index"> 
 			        <p ng-show="{{myComment.example.length<1}}">
@@ -40,15 +59,32 @@
 			        <button class="btn btn-danger" ng-click="removeComment(myComment)" ng-show="show">-</button>
 			        </p>
 			      </li>
-			      <li ng-repeat="myComment in paper.myFeedback track by $index"> 
-			        <p ng-show="{{myComment.example.length<1}}">
-			        {{myComment.comment}}
+			      <li ng-repeat="myFeed in paper.myFeedback track by $index"> 
+			        <p ng-show="{{myFeed.example.length<1}}">
+			        {{myFeed.comment}}
 			        
-			        <button class="btn btn-danger" ng-click="removeComment(myComment)" ng-show="show">-</button>
+			        <button class="btn btn-danger" ng-click="removeFeed(myFeed, paper.myFeedback)" ng-show="show">-</button>
 			        </p>
 			      </li>
 			    </ul>
 	    	</div>
+	    		</div>
+	    	</div>
+	    </div>
+	    	<!-- word count, etc. -->
+			<div class="row">
+				<div class="col-sm-12">
+					Your Words: {{paper.wc}}, Minimum Required: {{paper.minLength}}
+				</div>
+			</div>
+			<!-- hiding options -->
+			<div class="row">
+			    <button class="btn btn-default options" ng-click="show=!show">Show / Hide Options</button>
+		  </div>
+	    </div>
+	     
+	    <div class="row">
+	    	
 	    </div>
 	    <!-- grading table -->
 	    <div class="row">
@@ -58,18 +94,20 @@
 		        <tr ng-repeat="category in paper.categories" >
 		            <td class="col-md-4">{{category.name}}</td>
 		            <td class="col-md-4">{{category.value < .5*defValue ? 'Needs Work':''}}</td>
-		            <td class="col-md-4"><strong>{{category.value.toFixed(1)}}</strong>
-		              <button class="btn btn-default" ng-click="category.value=category.value+decreaseBy" ng-show="show">+</button>
-		              <button class="btn btn-default" ng-click="category.value=category.value-decreaseBy" ng-show="show">-</button>
+
+		            <td class="col-md-4">
+		            	<strong ng-model="category.value">{{category.value| number:1}}</strong>
+		              <button class="btn btn-default" ng-click="category.value=category.value+paper.decreaseBy" ng-show="show">+</button>
+		              <button class="btn btn-default" ng-click="category.value=category.value-paper.decreaseBy" ng-show="show">-</button>
 		            </td>
 
 		        </tr>
 		        <tr>
 		          <td>Final Grade</td>
 		          <td></td>
-		          <td ng-init="myTotal=paper.total"><strong>{{myTotal.toFixed(1)}} / {{paper.totalPoints}} - {{
-		          	(myTotal/paper.totalPoints)*100 | number:1}}% 
-		          	{{getGrade(myTotal,paper.totalPoints)}}
+		          <td ng-init="myTotal=getTotal(paper.categories)"><strong>{{getTotal(paper.categories).toFixed(1)}} / {{paper.totalPoints}} - {{
+		          	(getTotal(paper.categories)/paper.totalPoints)*100 | number:1}}% 
+		          	{{getGrade(getTotal(paper.categories),paper.totalPoints)}}
 
 		          </strong>
 		          </td>
@@ -78,7 +116,6 @@
 	    	</div>
 	    </div>
 
-		
 	</div>
 
 

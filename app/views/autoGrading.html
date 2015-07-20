@@ -1,0 +1,55 @@
+<div class="row">
+        <div class="col-sm-3"><label>
+          Min Length</label>
+          <input class="form-control" type="text" ng-model="minLength" \>
+          <p>Minimum Word Count for the document</p>
+        </div>
+        <div class="col-sm-3">
+          <label>Total Points</label>
+          <input class="form-control" type="text" ng-model="totalPoints" \>
+          <p>Maximum Points assigned</p>
+        </div>
+        <div class="col-sm-3">
+          <label>Def Value</label>
+          <input class="form-control" type="text" ng-model="defValue" \>
+          <p>Minimum value for each grading category</p>
+        </div>        
+        <div class="col-sm-3">
+          <label>Decrease By</label>
+          <input class="form-control" type="number" ng-model="decreaseBy">
+          <p>How much to decrease the score when the autograder finds an error</p>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col-sm-12">
+          <label>Key Words (List of words that autograder MUST find in the text)</label>
+          <textarea class="form-control" ng-model="keyWords"></textarea>
+        </div>
+      </div>
+      <!-- Grading Buttons -->
+      <div class="row">
+        <div class="col-sm-12">
+          <button class="btn btn-primary btn-group" ng-click="gradeEssay()">Auto Grade</button>
+          <button class="btn btn-primary btn-group" ng-click="saveGradedPaper()">Save Graded Paper</button>
+          <button class="btn btn-primary btn-group" ng-click="resetGradedPapers()">Reset Graded Papers</button>
+        </div>
+      </div>
+      <hr>
+      <div class="row">
+        <div class="col-sm-6">
+          <span class="btn btn-default btn-file">
+              <strong>Upload CSV file</strong> 
+              <input type="file" id="csvfile" accept="csv">
+          </span>
+        </div>
+        <div class="col-sm-6">
+          <h2>Batch Grading</h2>
+          <button class="btn btn-group btn-warning" ng-click="gradePapersFromCSV('csv')">Grade Papers From CSV</button>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-sm-12">
+          <a class="btn" ng-href="#/gradedPapers">View All Graded Papers</a>
+        </div>
+      </div>

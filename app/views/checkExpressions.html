@@ -1,0 +1,23 @@
+<p>You can test regular expressions here and then enter the comments into your own autoGrade function.</p>
+<div class="col-sm-12">
+  <label>Short Name</label>
+  <input type="text" class="form-control" ng-model="customError.name">
+</div>
+<div class="col-sm-12">
+  <label>Regular Expression (Which Evaluates on AutoGrade)</label>
+  <div class="input-group">
+    <span class="input-group-addon">/(</span>
+    <input type="text" class="form-control input-group" ng-model="customError.re"><span class="input-group-addon">)/gi</span>
+  </div>
+</div>
+<div class="col-sm-12">
+  <label>Custom Comment (appears under Specific Feedback if error is found)</label>
+  <textarea class="form-control" ng-model="customError.comment"></textarea>
+</div>
+<div class="col-sm-12">
+  <label>Category to be reduced</label>
+  <select class="form-control"
+  ng-model="customErrCategory" ng-options="category.name for category in categories"></select>
+  <button class="btn btn-primary" ng-click="addError(customErrCategory, customError); customError=defError"
+  ng-show="customError.re.length">Add New Error</button>  
+</div>

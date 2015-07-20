@@ -2,7 +2,9 @@ var CATS = [
     {'name': 'Grammar and Spelling',
      'value':60,
      'errors':[
-      {'re':/(\si\s)/g,'comment':'"I" should always be capitalized, but an error was found in your essay where it was not capitalized.','name':'I not capitalized'},
+      {'re':/(\s[i]\s)/g,'comment':'"I" should always be capitalized, but an error was found in your essay where it was not capitalized.','name':'I not capitalized'},
+// poorly spelled words 
+
 // its problems
       {'re':/(\bits going\b)/gi,'comment':'Make sure to use its appropriately, it\'s is a contraction of it and is while its shows possession.','name':'Wrong its-its going'},
       {'re':/(\bits supposed\b)/gi,'comment':'Make sure to use its appropriately, it\'s is a contraction of it and is while its shows possession.','name':'Wrong its'},
@@ -34,11 +36,12 @@ var CATS = [
       {'re':/(\w+[A-Z]\w{4,})/g,'comment':'Avoid all caps in your essay, even if you are citing a web source.'},
 
 // Faulty parallelism
-      {'re':/(\w+\swho[a-zA-Z\s,;]+and\s(?!who)\w+)/g,'comment':'Parallelism error: Make sure each each item is balanced in terms of gramatical weight.'},
+      // {'re':/(\w+\swho[a-zA-Z\s,;]+and\s(?!who)\w+)/g,'comment':'Parallelism error: Make sure each each item is balanced in terms of gramatical weight.'},
       {'re':/(\bin.+?,.+?\sor\sin\s\w+)/g,'comment':'You don\t need to include that in when you are introducing a series of related ideas. Remember to keep parallel structures the same.'},
 
 // subject verb agreement
-      {'re':/(\bdifferences are\b)/g,'comment':'Remember pluarl subjects take a singular verb.'},
+      {'re':/(\bdifferences is\b)/g,'comment':'Remember pluarl subjects take a singular verb.'},
+      {'re':/(differences)(?:\s[^\.]+?includes)/g,'comment':'Remember pluarl subjects take a singular verb.'},
       {'re':/(\beveryone were\b)/g,'comment':'Remember pluarl subjects take a singular verb.'},
       {'re':/(\beveryone are\b)/g,'comment':'Remember pluarl subjects take a singular verb.'},
       {'re':/(\banyone are\b)/g,'comment':'Remember pluarl subjects take a singular verb.'},
@@ -65,6 +68,16 @@ var CATS = [
       {'re':/(\b\w+ to small \w+)/g,'comment':'Use too for when you want to say overly or also and to a preposition.'},
       {'re':/(\b\w+ to big \w+)/g,'comment':'Use too for when you want to say overly or also and to a preposition.'},
       {'re':/(\b\w+ to little \w+)/g,'comment':'Use too for when you want to say overly or also and to a preposition.'},
+// mechanics with commas
+      {'re':/([a-zA-Z]+,[a-zA-Z]+)/g,'comment':'Always put a space after the comma.'},
+
+// wrong idiom
+      {'re':/(\sbeing as\s)/g,'comment':'This is the wrong expression for being, instead just use was instead'},
+
+//introducing clauses
+{'re':/(\bFor example[^,]\b)/gi,
+     'comment':'Introductory elements need a comma after them',
+     'name':'For exmaple needs comma after'},
 
      ],
    },
@@ -82,6 +95,10 @@ var CATS = [
       // unclear anticident
     {'re':/(\bThis\s(is|was)\s\w+)/g,
      'comment':'What exactly is this referring to here? It is unclear',
+     'name':'Unclear Antecedent 1'},
+     // repeating phrases
+     {'re':/(?:\n|\.\s)\b(\w+\s)(\w+\b)(?:.[^\.]+?\.\s)(?=\1\2)/g,
+     'comment':'Please do not repeat how your sentences begin',
      'name':'Unclear Antecedent 1'},
      ],
    },
@@ -116,7 +133,11 @@ var CATS = [
      'comment':'Can you say this with fewer words? In a clearer, more succinct way?',
      'name':'Too Colloquial 1'},
 
-
+// not needed
+{'re':/(\bthe fact that\b)/gi,
+     'comment':'Can you say this with fewer words? Just use "that" instead?',
+     'name':'Unncecessary the fact that 1'},
+  
 
      ],
    },

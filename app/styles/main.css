@@ -16,7 +16,8 @@ body {
 
 /*error*/
 .inline-error {
-  text-decoration: line-through;
+  text-decoration: underline;
+  background-color: lightgrey;
 }
 
 
@@ -79,7 +80,7 @@ body {
   margin: 10px;
 }
 
-.myComments {
+.myComments,.myFilteredPapers {
   max-height: 400px;
   min-height: 100px;
   overflow-y: scroll;
@@ -155,6 +156,7 @@ ul
 /*print media*/
 @media print {
   .paper {page-break-after: always;}
-  .options {visibility:hidden;}
+  .options, .autoFeedback, .displayOptions 
+  {display: none !important;}
 }
 /**/
