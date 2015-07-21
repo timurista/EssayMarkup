@@ -2,43 +2,37 @@
 <input class="filter form-control" placeholder="Enter the kind of comments you're looking for" ng-model="filter" ></input>
       <ul class="myComments col-sm-12" scrolly="showMore()">
         <!-- repeat each comment element -->
-        <li ng-repeat="comment in filteredStuff(filter) track by $index" class="card">
-         
-          <div class="row" ng-click="showFullComment=!showFullComment">
-            <div class="col-sm-6">
-              <span><strong>Section:</strong></span>
-              <span  ng-model="comment.category">{{comment.category}}</span>        
+        <li ng-repeat="comment in $storage.allComments | filter:filter track by $index" >
+        
+        
+          <div class="row card">
+            
+              <div ng-switch on="showFullComment" class="">
+                <div class="col-sm-1" ng-click="showFullComment=!showFullComment">
+                  <span class="glyphicon glyphicon-triangle-bottom"></span>
+                </div>
+
+                <div class="col-sm-4" >
+
+                  <span><strong>Section:</strong></span>
+                  <span  ng-model="comment.category">{{comment.category}}</span>        
+                </div>
+                <div class="col-sm-6">
+                  <span><strong>Subsection:</strong></span>
+                  <span ng-model="comment.subsection">{{comment.subsection}}</span>
+                </div>
+              <div class="row" ng-switch-when="false" >
+
+              </div>
+
+              <div class="" ng-switch-when="true">
+                <ng-include src="'views/commentCard.html'"></div>
+              </div>
             </div>
-            <div class="col-sm-6">
-              <span><strong>Subsection:</strong></span>
-              <span ng-model="comment.subsection">{{comment.subsection}}</span>
-            </div>
+
           </div>
-          <div class="row" ng-show="showFullComment">
-            <div class="col-sm-12">
-              <label>Grading Category:</label> <select class="form-control" ng-model="comment.selectedCategory" ng-options="name for name in categoryNames()"></select>
-            </div>
-          </div>
-          <div class="row" ng-show="showFullComment">
-            <div class="col-sm-12">
-              <label>Comment:</label>
-              <select class="form-control" ng-model="comment.selectedComment" ng-options="newComment.slice(0,50) for newComment in comment.comments ">
-              </select>              
-            </div>
-          </div>
-                
-          <div class="row" ng-show="showFullComment">
-            <div class="col-sm-12">
-              {{comment.selectedComment}}             
-            </div>
-          </div>
-          <div class="row" ng-show="showFullComment">
-            <div class="col-sm-12">
-              <label>Example</label>
-              <input class="form-control" type="text" ng-model="comment.example" value="{{comment.example}}"></input>
-              <button class="btn btn-primary" ng-click="addComment(comment, $index)">Add Comment</button>  
-            </div>     
-          </div>
+
+
           
         </li>
       </ul>

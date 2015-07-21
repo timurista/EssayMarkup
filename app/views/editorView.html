@@ -1,0 +1,96 @@
+<div class="row">
+	<div class="col-sm-4">
+
+		<div class="row">
+			<div class="col-sm-4">
+				{{$storage.sPaper.timestamp}}
+			</div>
+			<div class="col-sm-4">
+				{{$storage.sPaper.studentName}}
+			</div>
+			<div class="col-sm-4">
+				{{$storage.sPaper.studentGroup}}
+			</div>
+		</div>
+
+		<div class="row">
+			<div class="col-sm-12">
+				<h3>{{$storage.sPaper.title}}</h3>
+			</div>
+		</div>
+
+
+		<div class="row">
+			<div class="col-sm-12 paper">
+				{{$storage.sPaper.text}}
+			</div>			
+		</div>
+		<div class="row">
+			
+		</div>
+		
+	</div>
+	<div class="col-sm-4">
+		<div class="row">
+			<h2>Feedback</h2>
+			<!-- load feedback here -->
+			<div class="col-sm-12">
+				<ul>
+					<li ng-repeat="item in $storage.sPaper.myFeedback">
+						<p>
+							{{item.comment}} EX ({{item.example}})
+						
+						<button class="btn btn-danger" ng-click="$storage.sPaper.myFeedback.splice($index,1)">-</button>
+						</p>
+					</li>
+				</ul>
+			</div>
+
+			<h2>Comments</h2>
+			<div class="col-sm-12">
+				<ul>
+					<li ng-repeat="comment in $storage.sPaper.myComments">
+						<p>
+							{{comment.comment}} EX ({{comment.example}})
+						
+						<button class="btn btn-danger" ng-click="$storage.sPaper.myComments.splice($index,1)">-</button>
+					</li>
+				</ul>
+			</div>
+
+			
+
+		</div>
+	<!-- grades -->
+	<div class="row">
+		<table class="table">
+			<tr>
+				<th>Category</th>
+				<th>Comment</th>
+				<th>Score</th>
+			</tr>
+			<tr ng-repeat="cat in $storage.sPaper.categories">
+				<td>{{cat.name}}</td>
+				<td>
+				<td><input type="number" ng-model="cat.value"></td>
+			</tr>
+			<tr>
+				<td>Total</td>
+				<td></td>
+				<td>{{getTotal($storage.sPaper.categories)}} / {{$storage.sPaper.totalPoints}}</td>
+			</tr>
+		</table>
+	</div>
+
+	</div>
+	<div class="col-sm-4">
+
+		<div class="row allComments">
+			<h2>Comments</h2>
+			<!-- load editor views here -->
+          <ng-include src="'views/commentsView.html'"></ng-include>
+
+		</div>
+		
+	</div>
+</div>

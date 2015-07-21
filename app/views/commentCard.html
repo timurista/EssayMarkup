@@ -1,0 +1,25 @@
+          <div class="row">
+            <div class="col-sm-12">
+              <label>Grading Category:</label> <select class="form-control" ng-model="comment.selectedCategory" ng-options="obj.name for obj in $storage.sPaper.categories"></select>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-sm-12">
+              <label>Comment:</label>
+              <select class="form-control" ng-model="comment.selectedComment" ng-options="newComment.slice(0,50) for newComment in comment.comments ">
+              </select>              
+            </div>
+          </div>
+                
+          <div class="row">
+            <div class="col-sm-12">
+              {{comment.selectedComment}}             
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-sm-12">
+              <label>Example</label>
+              <input class="form-control" type="text" ng-model="comment.example" value="{{comment.example}}"></input>
+              <button class="btn btn-primary" ng-click="$storage.sPaper.myComments.push(comment)">Add Comment</button>  
+            </div>     
+          </div>

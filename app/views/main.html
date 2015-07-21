@@ -11,7 +11,7 @@
   <div class="col-sm-5">
     <div class="row">
       <div class="col-sm-8">
-        Current Grade: {{$storage.sPaper.total / totalPoints*100 | number:1}}%
+        Current Grade: {{$storage.sPaper.total / $storage.sPaper.totalPoints*100 | number:1}}%
       </div>
       <div class="col-sm-4">
         Words: {{getWordCount()}}
@@ -20,21 +20,21 @@
     <!-- Student Name -->
     <div class="row">
       <div class="col-sm-9">
-        <input type="text" class="form-control" ng-model="studentName" placeholder="Student's Full Name"></input>
+        <input type="text" class="form-control" ng-model="$storage.sPaper.studentName" placeholder="Student's Full Name"></input>
       </div>  
       <div class="col-sm-3">
-        <input type="text" class="form-control" ng-model="studentGroup" placeholder="Group"></input>
+        <input type="text" class="form-control" ng-model="$storage.sPaper.studentGroup" placeholder="Group"></input>
       </div>    
     </div>
 
     <div class="row">
       <div class="col-sm-12">
-        <input type="text" class="form-control" ng-model="title" placeholder="Title of the Essay"></input>
+        <input type="text" class="form-control" ng-model="$storage.sPaper.title" placeholder="Title of the Essay"></input>
       </div>
     </div>
     
     <!-- text of the essay -->
-    <div class="textAngular my-small-area" ta-toolbar=[['h1','h2','h3'],['bold','italics','underline']] text-angular ng-model="text">
+    <div class="textAngular my-small-area" ta-toolbar=[['h1','h2','h3'],['bold','italics','underline']] text-angular ng-model="$storage.sPaper.text">
       <textarea></textarea>
     </div>
   </div>
@@ -120,7 +120,7 @@
         <tr>
           <td>Final Grade</td>
           <td></td>
-          <td><strong>{{$storage.sPaper.total.toFixed(1)}} / {{totalPoints}}</strong></td>
+          <td><strong>{{$storage.sPaper.total.toFixed(1)}} / {{$storage.sPaper.totalPoints}}</strong></td>
         </tr>
       </table>
     </div>

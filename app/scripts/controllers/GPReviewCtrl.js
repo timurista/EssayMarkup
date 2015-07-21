@@ -5,6 +5,11 @@ angular.module('essayMarkupV1App')
     $scope.papers = $scope.$storage.papers || [];
     $scope.papers = JSON.parse(localStorage.getItem('papers'));
     $scope.paper = $scope.papers[0];
+    $scope.commments = $scope.$storage.allComments;
+    $scope.setPaper = function (p) {
+  		$scope.$storage.sPaper = p;
+  		console.log($scope.paper);
+  	}
 
     $scope.filterScore="0.8";
 
@@ -87,6 +92,22 @@ angular.module('essayMarkupV1App')
 		$scope.$watch('filterScore', function() {
 			$scope.numberShown = 10;
 		});
+
+		$scope.$watch('$storage.sPaper.categories', function() {
+			var sum = 0;
+			$scope.$storage.sPaper.categories.forEach(function (cat) {
+				sum+=cat.value
+			});
+			console.log(sum);
+			$scope.$storage.sPaper.total=sum;
+		})
+		$scope.getTotal = function(categories) {
+			var sum = 0;
+			categories.forEach( function(cat) {
+				sum+=cat.value;
+			})
+			return sum;
+		}
 
 
 		$scope.removeFeed = function (myFeed, feedback) {
