@@ -12,19 +12,46 @@
 // TODO allow for editing of essays
 
 angular.module('essayMarkupV1App')
-  .controller('GPCtrl', function ($scope, $localStorage) {
+  .controller('GPCtrl', function ($scope, $localStorage, Data) {
   	$scope.$storage = $localStorage;
 
-  	$scope.papers = JSON.parse(localStorage.getItem('papers')) || [];
+  	$scope.papers = $scope.$storage.papers;
   	$scope.thePaper={};
-  	
-  	$scope.average = function() {
-  		var sum = 0;
+  	console.log($scope.papers)
+
+  	$scope.downloadCSV = function() {
+  		console.log('pressed')
+
+  		var data = {};
   		$scope.papers.forEach( function(paper) {
-  			sum+=$scope.getTotal(paper.categories);  			
-  		});
-  		return ((sum/$scope.papers.length)/$scope.papers[0].totalPoints)*100;
-  	};
+  			var total = Data.getTotal(paper.categories);
+  			if (!(paper.studentName in data)) {
+	  			data[paper.studentName] = total;				
+  			} else if (total>data[paper.studentName]) {
+  				data[paper.studentName]=total;
+  			}
+  		})
+  		// get data from papers
+		var csvContent = "data:text/csv;charset=utf-8,";
+		var keys = Object.getOwnPropertyNames(data);
+		// sort names into order of ascending
+		keys.sort();
+
+		keys.forEach(function(key){
+		   var dataString = '"'+key+'",'+data[key];
+		   csvContent += dataString+'\n';
+		}); 
+		var encodedUri = encodeURI(csvContent);
+		window.open(encodedUri);
+  	}
+  	
+  	// $scope.average = function() {
+  	// 	var sum = 0;
+  	// 	$scope.papers.forEach( function(paper) {
+  	// 		sum+=$scope.getTotal(paper.categories);  			
+  	// 	});
+  	// 	return ((sum/$scope.papers.length)/$scope.papers[0].totalPoints)*100;
+  	// };
   	// removes the first element "headers" and returns it
   	$scope.headers = $scope.papers.shift();
   	$scope.headerKeys = Object.keys($scope.headers).slice(0,5);
@@ -36,26 +63,7 @@ angular.module('essayMarkupV1App')
   		})
   	}
 
-  	$scope.annotatedText = function(text, feedback) {
-  		// console.log(feedback);
-  		var newText = text;
-  		feedback.forEach( function(obj,id) {
-			var comment = obj.comment
-			// find examples
-  			// get all feedback
-  			// find error then display it'
-  			if (obj.example.length) {
-				var example = new RegExp('('+obj.example+')','gi');
-	  			// console.log(example, obj);
-	  			// console.log(text.match(example))
-				var rplString = '$1</span> <strong>['+(id+1)+']</strong>';
-		  		newText = newText.replace(example,'<span class="inline-error">'+rplString);
-		  	}
-  		});
-  		// paragraphs for returns
-  		newText = newText.replace('\n','<p>')
-		return newText;
-  	};
+  	$scope.annotatedText = Data.annotatedText;
 		$scope.getTotal = function(categories) {
 			var sum = 0;
 			categories.forEach(function(cat) {

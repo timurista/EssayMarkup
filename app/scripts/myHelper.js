@@ -1,44 +1,33 @@
-var pos = require('pos');
-// // glossary finds key words in a text
-var glossary = require('glossary');
-var natural = require('natural');
 
-module.exports = {
-
-  findByName: function(Objects, Name) {
-      for (var i = 0, len = Objects.length; i < len; i++) {
-      	console.log(Objects[i].name, Name)
-          if (Objects[i].name === Name)
-              return Objects[i]; // Return as soon as the object is found
-      }
-      return null; // The object was not found
-  },
+var findByName=function(Objects, Name) {
+  for (var i = 0, len = Objects.length; i < len; i++) {
+  	console.log(Objects[i].name, Name)
+      if (Objects[i].name === Name)
+          return Objects[i]; // Return as soon as the object is found
+  }
+  return null; // The object was not found
+};
   // helper for random element
-  randomElement:function (array) {
-      return array[Math.floor(Math.random() * array.length)]
-  },
+  var randomElement=function (array) {
+    return array[Math.floor(Math.random() * array.length)]
+  };
 
   // class for adding comments
-  Comment: function(name,points) {
+  var Comment=function(name,points) {
   	this.name=name || "";
   	this.points=points || 0;
-  },
+  };
 
-  Error:function (re,comment) {
+  var Error=function (re,comment) {
   	this.re= re || '';
   	this.comment= comment || 'My Comment';
-  },
+  };
 
-  TextData:function(name,comment,category,text,gradeF) {
-    this.name= name || 'name';
-    this.comment = comment || '';
-    this.category = category || '';
-    this.text = text || '';
-    this.grade = gradeF || null;
-    // this.spellingErrors = function () {
-    //   errs:natural.this.text
-    // }
-    this.sentences = function(text) {
+  var TextData = function(text) {
+  	var self = this;
+    self.text = text || '';
+
+    self.sentences = function(text) {
       // this checks with positive look ahead and discards it if length of sentence<4 characters I am.
       var re =/(\S.{6,}?[.!?])(?=\s*|$)/gi;
       var abrv_pattern = /([A-Z]{1,}[a-z]*\.)(?=\s+)/g
@@ -82,20 +71,22 @@ module.exports = {
         return getSents(newTxt);
       };
       // just raw text
-      var raw = removeTextByPatterns(this.text,[abrv_pattern]);
+      var raw = removeTextByPatterns(self.text,[abrv_pattern]);
       var sents = {
         raw:raw,
         asides:process(raw, aside_pattern),
         citation:process(raw, cite_pattern),
         quotes:process(raw, quote_pattern),
-        textOnly:removeTextByPatterns(this.text,
+        textOnly:removeTextByPatterns(self.text,
           [abrv_pattern, aside_pattern,cite_pattern,
           extraSpaces_pattern,
           spBeforePeriod_pattern]),
       }
       return sents
-    },
-    // this.taggedWords = function(sents){
+    }();
+    
+}
+    // self.taggedWords = function(sents){
     //   var allWords = [];
     //   sents.forEach( function(text) {
     //     var words = new pos.Lexer().lex(text);
@@ -104,7 +95,3 @@ module.exports = {
     //   });
     //   return allWords;
     // }
-
-  }
-}
-

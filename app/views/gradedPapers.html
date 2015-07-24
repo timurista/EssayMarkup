@@ -1,4 +1,7 @@
-<div class="row paper" ng-repeat="paper in papers">
+<button class="btn btn-small" ng-click="downloadCSV()">
+	Download CSV of students and their scores
+</button>
+<div class="row paper" ng-repeat="paper in $storage.papers">
 		
 		<div class="row">
 			<div class="row ">
@@ -25,7 +28,7 @@
 				    </div>			    			
 	    		</div>
 	    		<div class="row" >
-	    			<div class="col-sm-12 paper-text" ng-bind-html="annotatedText(paper.text,paper.myFeedback)" contentEditable="true"></div>
+	    			<div class="col-sm-12 paper-text" ng-bind-html="annotatedText(paper.text,paper.myFeedback, paper.myComments)" contentEditable="true"></div>
 	    		</div>
 	    	</div>
 
@@ -36,8 +39,9 @@
 	    			<div class="col-sm-12">
 			    		<h4>Specific Feedback</h4>
 			    		<ul>
-			    			<li ng-repeat="item in paper.myFeedback" ng-show="item.example.length>0">
-			    				<p>[{{$index+1}}] {{item.comment}} (EX: {{item.example}})
+			    			<li ng-repeat="item in paper.myFeedback" ng-show="item.example.length">
+			    				<p>[1.{{$index+1}}] {{item.comment}} 
+			    					<span >(EX: {{item.example}})</span>
 			    				<button class="btn btn-danger" ng-click="removeFeed(item, paper.myFeedback)" ng-show="show">-</button></p>
 			    			</li>
 			    		</ul>	    				
@@ -53,9 +57,10 @@
 			    </h4>
 			    <ul class="">
 			    	<li ng-repeat="myComment in paper.myComments track by $index"> 
-			        <p ng-show="{{myComment.example.length<1}}">
+			        <p >
+			        	<span ng-show="{{myComment.example.length>0}}">[2.{{$index}}] </span>
 			        {{myComment.comment}}
-			        
+			        <span ng-show="{{myComment.example.length>0}}"> (EX: {{myComment.example}}</span>
 			        <button class="btn btn-danger" ng-click="removeComment(myComment)" ng-show="show">-</button>
 			        </p>
 			      </li>

@@ -20,6 +20,6 @@
             <div class="col-sm-12">
               <label>Example</label>
               <input class="form-control" type="text" ng-model="comment.example" value="{{comment.example}}"></input>
-              <button class="btn btn-primary" ng-click="$storage.sPaper.myComments.push(comment)">Add Comment</button>  
+              <button class="btn btn-primary" ng-click="$storage.sPaper.myComments.push({comment:comment.selectedComment,example:comment.example})">Add Comment</button>  
             </div>     
           </div>

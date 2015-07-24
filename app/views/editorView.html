@@ -21,8 +21,9 @@
 
 
 		<div class="row">
-			<div class="col-sm-12 paper">
-				{{$storage.sPaper.text}}
+			<div class="col-sm-12">
+				<div class="paper-text" ng-bind-html="annotatedText($storage.sPaper.text,$storage.sPaper.myFeedback, $storage.sPaper.myComments)"></div>
+				
 			</div>			
 		</div>
 		<div class="row">
@@ -38,7 +39,7 @@
 				<ul>
 					<li ng-repeat="item in $storage.sPaper.myFeedback">
 						<p>
-							{{item.comment}} EX ({{item.example}})
+							[{{$index+1}}] {{item.comment}} {{item.example.length ? '(EX: '+item.example+')' : '' }}
 						
 						<button class="btn btn-danger" ng-click="$storage.sPaper.myFeedback.splice($index,1)">-</button>
 						</p>
@@ -49,13 +50,22 @@
 			<h2>Comments</h2>
 			<div class="col-sm-12">
 				<ul>
-					<li ng-repeat="comment in $storage.sPaper.myComments">
+					<li ng-repeat="cmt in $storage.sPaper.myComments">
 						<p>
-							{{comment.comment}} EX ({{comment.example}})
+							{{cmt.comment}} {{cmt.example.length ? 'EX: ('+cmt.example+')' : '' }}
 						
 						<button class="btn btn-danger" ng-click="$storage.sPaper.myComments.splice($index,1)">-</button>
 					</li>
 				</ul>
+			</div>
+
+			<!-- save paper -->
+			<div class="row">
+				<div class="col-sm-12">
+					<button class="btn btn-large">
+						Save Paper To All Papers
+					</button>
+				</div>
 			</div>
 
 			
@@ -77,7 +87,7 @@
 			<tr>
 				<td>Total</td>
 				<td></td>
-				<td>{{getTotal($storage.sPaper.categories)}} / {{$storage.sPaper.totalPoints}}</td>
+				<td>{{Data.getTotal($storage.sPaper.categories)}} / {{$storage.sPaper.totalPoints}}</td>
 			</tr>
 		</table>
 	</div>

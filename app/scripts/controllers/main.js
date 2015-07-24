@@ -65,9 +65,21 @@ angular.module('essayMarkupV1App')
     // saving storage ability
     $scope.$storage = $localStorage;
 
+    $scope.getTotal =  function(categories){
+      var total = 0;
+      for(var i = 0; i < categories.length; i++){
+          var cat = categories[i];
+          total += cat.value;
+      }
+      return total;
+    };
+
+
+
     //instantiate comments using ngstorage    
     $scope.$storage = $localStorage.$default({
         allComments: [], 
+        sindex: 0,
         sPaper: {
           'timestamp':Date.now(),
           'studentName':'',
@@ -84,10 +96,17 @@ angular.module('essayMarkupV1App')
           'defValue':60,
           'getWC':0,
           'minLength':'',
-          'keyWords':''
+          'keyWords':'',
+          'getTotal':$scope.getTotal,
         },
+        totalPoints: 300,
+        catLen: 5,
+        decreaseBy: 6,
+        defValue: 60,
+        minLength: 1000,
 
     });
+    $scope.paper = $scope.$storage.sPaper;
 
     // instantiate comments
     $scope.comments = $scope.$storage.allComments;
@@ -116,15 +135,7 @@ angular.module('essayMarkupV1App')
 
     $scope.categories = CATS;
 
-    $scope.getTotal =  function(categories){
-      var total = 0;
-      for(var i = 0; i < categories.length; i++){
-          var cat = categories[i];
-          total += cat.value;
-      }
-      return total;
-    };
-
+    
   
     //shared data
     $scope.feedback = $scope.myPaper.myFeedback;
@@ -251,43 +262,13 @@ angular.module('essayMarkupV1App')
     	Grade.grade($scope.text);
     };
 
-    // AUTOGRADING
 
-  $scope.minLength = 1000;
-  $scope.feedback = [];
-  $scope.totalPoints = 300;
-  $scope.catLen = 5;
-  $scope.getDefValue = function() {return $scope.totalPoints*1.0/$scope.catLen};
-  $scope.defValue = $scope.getDefValue();
-  $scope.getDecreaseBy = function() {return (($scope.totalPoints*1.0/$scope.catLen)*.1)};
-  $scope.decreaseBy = $scope.getDecreaseBy();
-  $scope.getWordCount = function () {
-  	return $scope.text.match(/(\w)+/gi).length};
-  $scope.wc = $scope.getWordCount;
-  // if total points changes, update default Value and decreasy by
-  $scope.$watch('totalPoints',function() {
-  	$scope.decreaseBy = $scope.getDecreaseBy();
-  	$scope.defValue = $scope.getDefValue();
-  });
-    $scope.$watch('defValue',function() {
-  	$scope.decreaseBy = $scope.getDecreaseBy();
-  	$scope.totalPoints = $scope.defValue*$scope.catLen;
-  });
+
 
 // FEEDBACK CATEGORIES
   $scope.newComment.category = $scope.categories[0].name || null;
   $scope.customErrCategory=$scope.categories[0].name;
 
-  // $scope.categories = JSON.parse(localStorage.getItem('allCategories'));
-  //   if (!$scope.categories) {
-  //     console.log($scope.categories);
-  //     // load from file storage
-  //     $scope.categories = CATS;
-
-  //     // save to local storage
-  //     localStorage.setItem('allCategories', JSON.stringify($scope.categories));
-  //     console.log($scope.categories);
-  //   }
 
 
 
@@ -314,32 +295,6 @@ angular.module('essayMarkupV1App')
   	return names;
   }
 
-  //grade essay
-  $scope.gradeEssay = function () {
-    // var paper = {
-    //     'timestamp':Date.now(),
-    //     'studentName':$scope.studentName,
-    //     'title':$scope.title,
-    //     'text':$scope.text,
-    //     'documentation':'None',
-    //     'studentGroup':$scope.studentGroup,
-    //     'myFeedback':$scope.feedback,
-    //     'myComments':$scope.myComments,
-    //     'categories':$scope.categories,
-    //     'totalPoints':$scope.totalPoints,
-    //     'decreaseBy':$scope.decreaseBy,
-    //     'total':$scope.getTotal(),
-    //     'defValue':$scope.defValue,
-    //     'getWC':$scope.wc,
-    //     'minLength':$scope.minLength,
-    //     'keyWords':$scope.keyWords
-    //   }
-    gradeEssay($scope.$storage.sPaper);
-    $scope.$storage.sPaper.total = $scope.getTotal($scope.$storage.sPaper.categories);
-    // assign feedback to value
-    // $scope.feedback = $scope.$storage.sPaper.myFeedback;
-    // console.log($scope.feedback)
-  }
 
   $scope.addValue = function (category) {
     category.value+=$scope.decreaseBy;
@@ -387,97 +342,7 @@ angular.module('essayMarkupV1App')
   		obj.value = (obj.value<0) ? 0: obj.value;
   	});
   });
-  $scope.saveGradedPaper = function() {
-    var paper = {
-      text:$scope.text,
-      title:$scope.title,
-      myComments:$scope.myComments,
-      myFeedback:$scope.feedback,
-      categories:$scope.categories,
-      studentName:$scope.studentName,
-      studentGroup:$scope.studentGroup,
-      totalPoints:$scope.totalPoints,
-      decreaseBy:$scope.decreaseBy,
-    }
-    $scope.papers.push(paper);
-    localStorage.setItem('papers',JSON.stringify($scope.papers));
-  }
 
-  $scope.resetGradedPapers = function() {
-    if (confirm('This will remove all paper data, are you sure you want to?')) {
-      $scope.papers = [];
-      localStorage.setItem('papers',JSON.stringify($scope.papers));
-    }
-
-  }
-
-  // get grades from csv file
-  $scope.gradePapersFromCSV = function(csv) {
-    var myfile = $("#csvfile")[0].files[0];
-        
-    if(!myfile){
-        alert("No file selected.");
-        return;
-    } else {
-      var csv = "";
-      var reader = new FileReader();
-      reader.onload = function(e) {
-        var data = e.target.result;
-        $scope.autoGradeCSVPapers(data);
-      };
-      reader.readAsText(myfile);
-    }
-  };
-  // ste 2 of the grading
-  $scope.autoGradeCSVPapers = function(csv) {
-    var arr = CSVToArray(csv,',');
-    console.log(arr,arr.length)
-    var graded = $scope.gradePapers(arr);
-    localStorage.setItem('papers',JSON.stringify($scope.papers.concat(graded)));
-    console.log('saved all those papers.. heck yeah!');
-  }
-
-  $scope.gradePapers = function(arr) {
-    var graded = [];
-    arr.forEach( function(paper) {
-      var paperObj ={
-        'timestamp':paper[0],
-        'studentName':paper[1],
-        'title':paper[2],
-        'text':paper[3],
-        'documentation':paper[4],
-      }
-      // if paper has more than 5 entries, we will assume last entry is the student group
-      paperObj['studentGroup'] = (paper.length>5)? paper[5]:'Not Displayed';
-
-      paperObj['myFeedback']=[];
-      paperObj['myComments']=[];
-      paperObj['categories']=$scope.copyObjArray($scope.categories);
-      paperObj['totalPoints']=$scope.totalPoints;
-      paperObj['decreaseBy']=$scope.decreaseBy;
-      paperObj['total']=0;
-      paperObj['defValue']=$scope.defValue;
-      paperObj['getWC']=$scope.wc;
-      paperObj['minLength']=$scope.minLength;
-      paperObj['keyWords']=$scope.keyWords;
-      // grades the essay for the paperObject
-      // doesn't not return anything but updates myFeedback
-      gradeEssay(paperObj);
-
-      graded.push(paperObj);
-    });
-    console.log(graded);    
-    return graded;
-
-  }
-  $scope.copyObjArray = function(arr) {
-    var newArr = [];
-    arr.forEach( function(obj) {
-      newArr.push($.extend({}, obj));
-
-    })
-    return newArr;
-  }
 
 
   

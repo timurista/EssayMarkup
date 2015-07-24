@@ -1,14 +1,31 @@
 angular.module('essayMarkupV1App')
-  .controller('GPReviewCtrl', function ($scope, $localStorage) {
+  .controller('GPReviewCtrl', function ($scope, $localStorage, Data) {
   	// saving storage ability
     $scope.$storage = $localStorage;
-    $scope.papers = $scope.$storage.papers || [];
-    $scope.papers = JSON.parse(localStorage.getItem('papers'));
-    $scope.paper = $scope.papers[0];
+    $scope.id = 0; // parseInt($scope.$storage.sindex) || 0;
+    $scope.papers = $scope.$storage.papers.sort() || [];
+
+    // $scope.papers = JSON.parse(localStorage.getItem('papers'));
+    // console.log($scope.papers[$scope.id])
+    $scope.paper = $scope.$storage.sPaper || {};
     $scope.commments = $scope.$storage.allComments;
-    $scope.setPaper = function (p) {
-  		$scope.$storage.sPaper = p;
+    $scope.setPaper = function (paper) {
+  		$scope.paper = paper;
+  		$scope.$storage.sPaper = paper;
   		console.log($scope.paper);
+  	}
+  	console.log(Data.getTotal($scope.paper.categories))
+
+  	$scope.saveToPapers = function(paper) {
+  		$scope.$storage.sPaper = paper;
+
+  		var id = $scope.papers.indexOf(paper);
+  		if(id>-1) {
+	  		$scope.$storage.papers[id] = paper;
+  		} else {
+  			$scope.$storage.push(paper);
+  		}
+  		$scope.scores = $scope.filteredScores($scope.filterScore);
   	}
 
     $scope.filterScore="0.8";
@@ -32,26 +49,7 @@ angular.module('essayMarkupV1App')
   		})
   	}
 
-  	$scope.annotatedText = function(text, feedback) {
-  		// console.log(feedback);
-  		var newText = text;
-  		feedback.forEach( function(obj,id) {
-			var comment = obj.comment
-			// find examples
-  			// get all feedback
-  			// find error then display it'
-  			if (obj.example.length) {
-				var example = new RegExp('('+obj.example+')','gi');
-	  			// console.log(example, obj);
-	  			// console.log(text.match(example))
-				var rplString = '$1</span> <strong>['+(id+1)+']</strong>';
-		  		newText = newText.replace(example,'<span class="inline-error">'+rplString);
-		  	}
-  		});
-  		// paragraphs for returns
-  		newText = newText.replace('\n','<p>')
-		return newText;
-  	};
+  	$scope.annotatedText = Data.annotatedText;
 		$scope.getTotal = function(categories) {
 			var sum = 0;
 			categories.forEach(function(cat) {
@@ -78,7 +76,7 @@ angular.module('essayMarkupV1App')
 
 		$scope.filteredScores = function(filter) {
 			return $scope.papers.filter( function(paper) {
-				var percent = (paper.total/paper.totalPoints).toString().match(/^\d+(?:\.\d{0,1})?/)[0];
+				var percent = ($scope.getTotal(paper.categories)/paper.totalPoints).toString().match(/^\d+(?:\.\d{0,1})?/)[0];
 				// console.log(percent,filter)
 				return (percent===filter);
 			});
@@ -93,28 +91,49 @@ angular.module('essayMarkupV1App')
 			$scope.numberShown = 10;
 		});
 
-		$scope.$watch('$storage.sPaper.categories', function() {
-			var sum = 0;
-			$scope.$storage.sPaper.categories.forEach(function (cat) {
-				sum+=cat.value
-			});
-			console.log(sum);
-			$scope.$storage.sPaper.total=sum;
-		})
-		$scope.getTotal = function(categories) {
-			var sum = 0;
-			categories.forEach( function(cat) {
-				sum+=cat.value;
-			})
-			return sum;
-		}
+		$scope.scores = $scope.filteredScores($scope.filterScore);
 
+		// $scope.$watch('$storage.sPaper.categories', function() {
+		// 	var sum = 0;
+		// 	$scope.$storage.sPaper.categories.forEach(function (cat) {
+		// 		sum+=cat.value
+		// 	});
+		// 	console.log(sum);
+		// 	$scope.$storage.sPaper.total=sum;
+		// })
+		// $scope.getTotal = function(categories) {
+		// 	var sum = 0;
+		// 	categories.forEach( function(cat) {
+		// 		sum+=cat.value;
+		// 	})
+		// 	return sum;
+		// }
 
-		$scope.removeFeed = function (myFeed, feedback) {
-			console.log(feedback);
-			var id = feedback.indexOf(myFeed);
-			feedback.splice(id,1);
-		}
+		// $scope.removeFeed = function (myFeed, feedback) {
+		// 	console.log(feedback);
+		// 	var id = feedback.indexOf(myFeed);
+		// 	feedback.splice(id,1);
+		// }
+  	$scope.annotatedText = function(text, feedback) {
+  		// console.log(feedback);
+  		var newText = text;
+  		feedback.forEach( function(obj,id) {
+			var comment = obj.comment
+			// find examples
+  			// get all feedback
+  			// find error then display it'
+  			if (obj.example.length) {
+				var example = new RegExp('('+obj.example+')','gi');
+	  			// console.log(example, obj);
+	  			// console.log(text.match(example))
+				var rplString = '$1</span> <strong>['+(id+1)+']</strong>';
+		  		newText = newText.replace(example,'<span class="inline-error">'+rplString);
+		  	}
+  		});
+  		// paragraphs for returns
+  		newText = newText.replace('\n','<p>')
+		return newText;
+  	};
 
   });
  

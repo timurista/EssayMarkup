@@ -19,6 +19,7 @@
     <!-- endbower -->
     <!-- endbuild -->
     <!-- build:css(.tmp) styles/main.css -->
+    <link rel="stylesheet" href="styles/slider.css">
     <link rel="stylesheet" href="styles/main.css">
     <!-- endbuild -->
   </head>
@@ -102,6 +103,7 @@
     <script src="bower_components/textAngular/dist/textAngularSetup.js"></script>
     <script src="bower_components/jquery-ui/jquery-ui.js"></script>
     <script src="bower_components/angular-ui-sortable/sortable.js"></script>
+    <script src="bower_components/ngstorage/ngStorage.js"></script>
     <!-- endbower -->
     <!-- endbuild -->
 
@@ -109,10 +111,13 @@
         
         <!-- helpers -->
         <scirpt src="scripts/jquery.csv-0.71.min.js"></script>
+        <script src="scripts/myHelper.js"></script>
         <script src="scripts/csvHelper.js"></script>
         <script src="scripts/gradeEssay.js"></script>
         <!-- loading ngStorage -->
-        <script src="bower_components/ngstorage/ngStorage.min.js"></script>
+
+        <!-- including helper files -->
+        
 
 
 
@@ -125,6 +130,8 @@
         <script src="scripts/controllers/about.js"></script>
         <script src="scripts/controllers/gradedPapers.js"></script>
         <script src="scripts/controllers/GPReviewCtrl.js"></script>
+        <script src="scripts/controllers/autoGradeCtrl.js"></script>
+
         <!-- endbuild -->
 </body>
 </html>

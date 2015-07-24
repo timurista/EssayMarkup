@@ -1,10 +1,14 @@
 <div class="row" >
-	<div class="col-sm-2">
-		<label>Current Score: {{filterScore*100}}%</label>					
-	</div>
-	<div class="col-sm-6">
+	
+	<div class="col-sm-8">
+		<div id="slider">
+			<input id="rangeinput" type="range" step=".1" min="0.0" max="1.0" class="form-control" ng-model="filterScore"/>
+			<!-- <input class="bar" type="range" id="rangeinput" value="50" > -->
+			<span class="highlight"></span>
+			<output id="rangevalue">{{filterScore*100}}%</output>
+		</div>
 		<!-- Make sure you can see numbers on range -->
-		<input type="range" step=".1" min="0.0" max="1.0" class="form-control" ng-model="filterScore">
+		
 	</div>				
 	<div class="col-sm-2">
 		Average: <strong>{{average() | number:1}}%</strong>
@@ -32,8 +36,8 @@
 					<ng-include src="'views/showPaper.html'"></ng-include>
 				</td> -->
 				<td>{{myPaper.studentGroup}}</td>
-				<td>{{myPaper.total | number:0}}</td>
-				<td> {{getGrade(myPaper.total,myPaper.totalPoints)}}</td>
+				<td>{{getTotal(myPaper.categories) | number:0}}</td>
+				<td> {{getGrade(getTotal(myPaper.categories),myPaper.totalPoints)}}</td>
 				
 			</tr>
 		</table>

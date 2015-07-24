@@ -23,7 +23,7 @@
 		    </div>			    			
 		</div>
 		<div class="row" >
-			<div class="col-sm-12 paper-text" ng-bind-html="annotatedText(paper.text,paper.myFeedback)" contentEditable="true"></div>
+			<div class="col-sm-12 paper-text" ng-bind-html="annotatedText(paper.text,paper.myFeedback, paper.myComments)" contentEditable="true"></div>
 		</div>
 	</div>
 
@@ -34,7 +34,7 @@
 			<div class="col-sm-12">
 	    		<h4>Specific Feedback</h4>
 	    		<ul>
-	    			<li ng-repeat="item in paper.myFeedback" ng-show="item.example.length>0">
+	    			<li ng-repeat="item in paper.myFeedback">
 	    				<p>[{{$index+1}}] {{item.comment}} (EX: {{item.example}})
 	    				<button class="btn btn-danger" ng-click="removeFeed(item, paper.myFeedback)" ng-show="show">-</button></p>
 	    			</li>
@@ -94,7 +94,8 @@
             <td class="col-md-4">{{category.value < .5*defValue ? 'Needs Work':''}}</td>
 
             <td class="col-md-4">
-            	<strong ng-model="category.value">{{category.value| number:1}}</strong>
+            	<!-- ng-change="paper.total=getTotal($parent.categories)" -->
+            	<strong ng-model="category.value" >{{category.value| number:1}}</strong>
               <button class="btn btn-default" ng-click="category.value=category.value+paper.decreaseBy" ng-show="show">+</button>
               <button class="btn btn-default" ng-click="category.value=category.value-paper.decreaseBy" ng-show="show">-</button>
             </td>
@@ -103,9 +104,9 @@
         <tr>
           <td>Final Grade</td>
           <td></td>
-          <td ng-init="myTotal=getTotal(paper.categories)"><strong>{{getTotal(paper.categories).toFixed(1)}} / {{paper.totalPoints}} - {{
-          	(getTotal(paper.categories)/paper.totalPoints)*100 | number:1}}% 
-          	{{getGrade(getTotal(paper.categories),paper.totalPoints)}}
+          <td><strong>{{paper.total.toFixed(1)}} / {{paper.totalPoints}} - {{
+          	(paper.total/paper.totalPoints)*100 | number:1}}% 
+          	{{getGrade(paper.total,paper.totalPoints)}}
 
           </strong>
           </td>
