@@ -22,7 +22,7 @@ var CATS = [
       {'re':/(\bpeaces? of \w+)/gi,'comment':'Remember, piece refers to a part of something while peace is a state of calmness.','name':"Piece vs Peace",'on':true},
 // their vs there
       {'re':/(\bTheir are \w+)/gi,'comment':'Remember, their is for possession while there is for making statements.','name':'There vs Their','on':true},
-      {'re':/(\bis there \w+)/gi,'comment':'Remember, their is for possession while there is for making statements.','name':'There vs Their','on':true},
+      // {'re':/(\bis there \w+)/gi,'comment':'Remember, their is for possession while there is for making statements.','name':'There vs Their','on':true},
       {'re':/(\bits theres\w+)/gi,'comment':'Remember, their is for possession while there is for making statements.','name':'There vs Their','on':true},
       {'re':/(\bto there \w+)/gi,'comment':'Remember, their is for possession while there is for making statements.','name':'There vs Their','on':true},
 
@@ -79,7 +79,7 @@ var CATS = [
 //introducing clauses
     {'re':/(\bFor example[^,]\b)/gi,
      'comment':'Introductory elements need a comma after them',
-     'name':'For exmaple needs comma after','on':true},
+     'name':'For example needs comma after','on':true},
 
      ],
 },
@@ -88,13 +88,13 @@ var CATS = [
      'errors':[
       {'re':/(\bstuffs?\b)/gi,'comment':'Your language is at times not specific which causes some of your ideas to fall flat. Use clear transitions and specific language instead of "stuff" to capture your main points.','on':true},
       {'re':/(\bthings?\b)/gi,'comment':'Make sure to use specific language instead of "thing" to capture your main points.','on':true},
-      {'re':/(\bsort of\b)/gi,'comment':'Can you use a better vocabulary word here? Perhaps a phrase such as "to some degree" or "amost" might work better. But try and find better ways to express your ideas here.','on':true},
+      {'re':/(\bsort of\b)/gi,'comment':'Can you use a better vocabulary word here? Perhaps a phrase such as "to some degree" or "almost" might work better. But try and find better ways to express your ideas here.','on':true},
      ],
    },
     {'name': 'Organization',
      'value': 60,
      'errors':[
-      {'re':/(\bi think)/gi,'comment':'Get into the habbit of organizing your thoughts without using I think.','on':true},
+      {'re':/(\bi think)/gi,'comment':'Get into the habit of organizing your thoughts without using I think.','on':true},
       // unclear anticident
     {'re':/(\bThis\s(is|was)\s\w+)/g,
      'comment':'What exactly is this referring to here? It is unclear',
@@ -139,7 +139,7 @@ var CATS = [
 // not needed
 {'re':/(\bthe fact that\b)/gi,
      'comment':'Can you say this with fewer words? Just use "that" instead?',
-     'name':'Unncecessary the fact that 1','on':true},
+     'name':'Unnecessary the fact that 1','on':true},
   
 
      ],

@@ -14,7 +14,7 @@ angular.module('essayMarkupV1App')
         // load if the there are no comments
           console.log('objects loaded',json.length); // this will show the info it in firebug console
           $scope.$storage.allComments = json;
-          console.log($scope.$storage);
+          // console.log($scope.$storage);
           // push categories into the comments;
           $scope.comments.forEach( function(comment) {
             if ($scope.sectionNames.indexOf(comment.category)<0) {

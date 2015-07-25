@@ -1,7 +1,8 @@
 <button class="btn btn-small" ng-click="downloadCSV()">
 	Download CSV of students and their scores
 </button>
-<div class="row paper" ng-repeat="paper in $storage.papers">
+<div class="debug">Selected: {{paper.myComments}}</div>
+<div class="row paper" ng-repeat="paper in papers">
 		
 		<div class="row">
 			<div class="row ">
@@ -28,7 +29,8 @@
 				    </div>			    			
 	    		</div>
 	    		<div class="row" >
-	    			<div class="col-sm-12 paper-text" ng-bind-html="annotatedText(paper.text,paper.myFeedback, paper.myComments)" contentEditable="true"></div>
+	    			
+	    			<div class="col-sm-12 paper-text" ng-bind-html="annotatedText(paper.text,paper.myFeedback, paper.myComments)"></div>
 	    		</div>
 	    	</div>
 
@@ -59,16 +61,17 @@
 			    	<li ng-repeat="myComment in paper.myComments track by $index"> 
 			        <p >
 			        	<span ng-show="{{myComment.example.length>0}}">[2.{{$index}}] </span>
+
 			        {{myComment.comment}}
 			        <span ng-show="{{myComment.example.length>0}}"> (EX: {{myComment.example}}</span>
-			        <button class="btn btn-danger" ng-click="removeComment(myComment)" ng-show="show">-</button>
+			        <button class="btn btn-danger" ng-click="paper.myComments.splice($index,1)" ng-show="show">-</button>
 			        </p>
 			      </li>
 			      <li ng-repeat="myFeed in paper.myFeedback track by $index"> 
 			        <p ng-show="{{myFeed.example.length<1}}">
 			        {{myFeed.comment}}
 			        
-			        <button class="btn btn-danger" ng-click="removeFeed(myFeed, paper.myFeedback)" ng-show="show">-</button>
+			        <button class="btn btn-danger" ng-click="paper.myFeedback.splice($index,1)" ng-show="show">-</button>
 			        </p>
 			      </li>
 			    </ul>
@@ -85,6 +88,13 @@
 			<!-- hiding options -->
 			<div class="row">
 			    <button class="btn btn-default options" ng-click="show=!show">Show / Hide Options</button>
+			    <button class="btn btn-secondary" ng-click="showComments=!showComments; setPaper(paper)">Add Comments</button>
+			    <div class="col-sm-12" ng-switch on="showComments"> 
+			    	<div ng-switch-when="true">
+			    	<div ng-include="'views/commentsView.html'"></div>
+			    	</div>
+			    </div>
+
 		  </div>
 	    </div>
 	     

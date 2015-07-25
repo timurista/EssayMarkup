@@ -9,15 +9,20 @@
           <input class="form-control" type="number" ng-model="totalPoints" ng-change=updateValues(totalPoints,catLen)>
           <p>Maximum Points assigned</p>
         </div>
-        <div class="col-sm-3">
+        <div class="col-sm-2">
           <label>Def Value</label>
           <input class="form-control" type="number" ng-model=defValue >
           <p>Minimum value for each grading category</p>
         </div>        
-        <div class="col-sm-3">
+        <div class="col-sm-2">
           <label>Decrease By</label>
           <input class="form-control" type="number" ng-model=decreaseBy>
           <p>How much to decrease the score when the autograder finds an error</p>
+        </div>
+        <div class="col-sm-2">
+          <label>Citations</label>
+          <input class="form-control" type="number" ng-model="citations">
+          <p>The number of inline citations required</p>
         </div>
       </div>
 
@@ -30,7 +35,7 @@
       <!-- Grading Buttons -->
       <div class="row">
         <div class="col-sm-12">
-          <button class="btn btn-primary btn-group" ng-click=gradeEssay(minLength,totalPoints,decreaseBy,defValue)>Auto Grade</button>
+          <button class="btn btn-primary btn-group" ng-click="gradeEssay(minLength,totalPoints,decreaseBy,defValue,paper)">Auto Grade</button>
           <button class="btn btn-primary btn-group" ng-click="saveGradedPaper()">Save Graded Paper</button>
           <button class="btn btn-primary btn-group" ng-click="resetGradedPapers()">Reset Graded Papers</button>
         </div>

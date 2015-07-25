@@ -20,6 +20,13 @@ body {
   background-color: lightgrey;
 }
 
+.debug {
+  position: fixed;
+  top: 0;
+  background-color: white;
+  color: red;
+  border: 2px solid black;
+}
 
 /* Everything but the jumbotron gets side spacing for mobile first views */
 /*.header,

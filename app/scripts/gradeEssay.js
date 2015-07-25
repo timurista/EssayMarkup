@@ -1,10 +1,11 @@
 // requirejs(['myHelper.js'])
 
-var FeedbItem = function (cmt, example) {
+var FeedbItem = function (cmt, example, category) {
   // console.log(cmt, example);
   var self = this;
   self.comment = cmt || '';  
   self.example = example || '';
+  self.category = category || '';
 }
 
 //make sure no value is < 0
@@ -94,7 +95,7 @@ var gradeCategory = function (str,category,errors,paper) {
       // console.log(matches, err.comment)
       // append comments
       console.assert(matches[0])
-      paper.myFeedback.push(new FeedbItem(err.comment,matches[0]));
+      paper.myFeedback.push(new FeedbItem(err.comment,matches[0],category));
       // deduct points
       category.value -= paper.decreaseBy;
     }
@@ -107,11 +108,11 @@ var gradeDocumentation = function (paper) {
   // var re = /\((.+?)\)/gi;
   var re = /\(\w* \d{4}\)/g;
   var matches = paper.text.match(re)
-  if (matches<5 && paper.categories.length>4) {
+  if (matches<paper.citationsNeeded && paper.categories.length>4) {
     paper.categories[docID].value -= paper.decreaseBy;
     // check if less than 0
     if (paper.categories[docID].value<0) {paper.categories[4].value=0}
-    paper.myFeedback.push(new FeedbItem("Are you sure you are supporting your evidence with citations and also citing your information properly? (author, date/page number)? Check over those citations because they need work"));
+    paper.myFeedback.push(new FeedbItem("Are you sure you are supporting your evidence with citations and also citing your information properly? (author, date/page number)? Check over those citations because they need work"),paper.categories[docID].name);
   }
 
 }
@@ -162,8 +163,6 @@ var gradeTitle = function(paper) {
       paper.title.replace(err.re,'<span class="inline-error">$1</span>');
     }
   })
-  // gradeCategory(paper.text,
-  //   paper.categories[category],errors,paper);
 }
 
 
@@ -182,10 +181,6 @@ var resetValues = function (paper) {
   for (i in paper.categories) {
     paper.categories[i].value=paper.defValue;          
   };
-  // reset myFeedback
-  // paper.myFeedback = [];
-  // include textObject
-  // paper.my
 };
 
 var randomComplement = function () {

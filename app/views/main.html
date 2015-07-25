@@ -6,6 +6,9 @@
 </div>
 
 <div class="row ">
+  <ul>
+    {{categories[0].errors[0].on}}
+  </ul>
 
   <!-- grading -->
   <div class="col-sm-5">
@@ -13,8 +16,9 @@
       <div class="col-sm-8">
         Current Grade: {{paper.total / paper.totalPoints*100 | number:1}}%
       </div>
-      <div class="col-sm-4">
-        Words: {{paper.wc}}
+      <div class="col-sm-4" >
+
+        Words: {{getWC(paper.text)}}
       </div>
     </div>
     <!-- Student Name -->
@@ -34,8 +38,9 @@
     </div>
     
     <!-- text of the essay -->
-    <div class="textAngular my-small-area" ta-toolbar=[['h1','h2','h3'],['bold','italics','underline']] text-angular ng-model="paper.text">
-      <textarea></textarea>
+    <!-- Old textangular  ta-toolbar=[['h1','h2','h3'],['bold','italics','underline']] text-angular -->
+    <div >
+      <textarea class="form-control my-small-area" ng-model="paper.text" rows="20"></textarea>
     </div>
   </div>
   
@@ -87,7 +92,8 @@
       <ul>
         
         <li ng-repeat="myFeed in paper.myFeedback">{{myFeed.comment}} {{myFeed.example ? '(EX: '+myFeed.example+')':''}}
-        <button class="btn btn-danger" ng-click="paper.myFeedback.splice($index,1)" ng-show="show">-</button>
+          {{myFeed.category.name}}
+        <button class="btn btn-danger" ng-click="paper.myFeedback.splice($index,1); addBackToCategory(myFeed.category,paper)" ng-show="show">-</button>
         </li>
       </ul>
     <label>
@@ -101,7 +107,7 @@
         <span ng-show="{{myComment.example.length>0}}">
         (Example: {{myComment.example}})
         </span>
-        <button class="btn btn-danger" ng-click="paper.myComments.splice($index,)" ng-show="show">-</button>
+        <button class="btn btn-danger" ng-click="paper.myComments.splice($index,1); addBackToCategory(myComments.category, paper)" ng-show="show">-</button>
         </p>
       </li>
     </ul>
@@ -120,7 +126,7 @@
         <tr>
           <td>Final Grade</td>
           <td></td>
-          <td><strong>{{paper.total.toFixed(1)}} / {{paper.totalPoints}}</strong></td>
+          <td><strong>{{getTotal(paper.categories).toFixed(1)}} / {{paper.totalPoints}}</strong></td>
         </tr>
       </table>
     </div>

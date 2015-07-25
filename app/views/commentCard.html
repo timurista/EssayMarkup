@@ -1,6 +1,6 @@
           <div class="row">
             <div class="col-sm-12">
-              <label>Grading Category:</label> <select class="form-control" ng-model="comment.selectedCategory" ng-options="obj.name for obj in $storage.sPaper.categories"></select>
+              <label>Grading Category:</label> <select class="form-control" ng-model="comment.selectedCategory" ng-options="obj.name for obj in paper.categories"></select>
             </div>
           </div>
           <div class="row">
@@ -20,6 +20,6 @@
             <div class="col-sm-12">
               <label>Example</label>
               <input class="form-control" type="text" ng-model="comment.example" value="{{comment.example}}"></input>
-              <button class="btn btn-primary" ng-click="$storage.sPaper.myComments.push({comment:comment.selectedComment,example:comment.example})">Add Comment</button>  
+              <button class="btn btn-primary" ng-click="paper.myComments.push({comment:comment.selectedComment,example:comment.example})">Add Comment</button>  
             </div>     
           </div>

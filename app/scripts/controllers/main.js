@@ -64,6 +64,8 @@ angular.module('essayMarkupV1App')
   .controller('MainCtrl', function ($scope, Data, Grade, $localStorage) {
     // saving storage ability
     $scope.$storage = $localStorage;
+    $scope.getWC = Data.getWC;
+
 
     $scope.getTotal =  function(categories){
       var total = 0;
@@ -106,7 +108,32 @@ angular.module('essayMarkupV1App')
         minLength: 1000,
 
     });
-    $scope.paper = $scope.$storage.sPaper;
+    $scope.paper = localStorage["sPaper"]
+    if ($scope.paper) {
+      $scope.paper = JSON.parse($scope.paper);
+
+    }
+    else {
+      $scope.paper = {
+          'timestamp':Date.now(),
+          'studentName':'',
+          'title':'',
+          'text':Data.text,
+          'documentation':'',
+          'studentGroup':'',
+          'myFeedback':[],
+          'myComments':[],
+          'categories':CATS, // a global categories listing
+          'totalPoints':300,
+          'decreaseBy':6,
+          'total':300,
+          'defValue':60,
+          'getWC':0,
+          'minLength':'',
+          'keyWords':'',
+          'getTotal':$scope.getTotal,
+        };
+    }
 
     // instantiate comments
     $scope.comments = $scope.$storage.allComments;
@@ -342,6 +369,17 @@ angular.module('essayMarkupV1App')
   		obj.value = (obj.value<0) ? 0: obj.value;
   	});
   });
+  $scope.addBackToCategory = function(category, paper) {
+    console.log(category.name, paper.decreaseBy);
+    try {
+      var id = paper.categories.indexOf(category);
+      paper.categories[id].value+=paper.decreaseBy;
+      
+    }
+    catch (err) {
+      console.log(err);
+    }
+  }
 
 
 

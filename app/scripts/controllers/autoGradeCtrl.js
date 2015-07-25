@@ -1,22 +1,15 @@
 angular.module('essayMarkupV1App')
-  .controller('autoGradeCtrl', function ($scope, $localStorage) {
-  	$scope.categories = CATS;
-  	$scope.$storage = $localStorage;
-  	    // AUTOGRADING
-  	    $scope.$storage.ag = {
-  	    	minLength: 1000,
-  	    	totalPoints: 300,
-  	    	decreaseBy: 60,
-  	    	defValue: 6,
-  	    	catLen: 5,
-  	    }
-  	$scope.ag = $scope.$storage.ag;
-  $scope.minLength  = $scope.$storage.ag.minLength || 1000;
-  $scope.totalPoints = $scope.$storage.ag.totalPoints || 300;
-  $scope.decreaseBy = $scope.$storage.ag.decreaseBy || 6;
-  $scope.defValue = $scope.$storage.ag.defValue || 60;
-  $scope.catLen = $scope.$storage.ag.catLen || 5;
-  $scope.categories = CATS;
+  .controller('autoGradeCtrl', function ($scope, $localStorage, Data) {
+  // $scope.paper = Data.paper;
+  $scope.$storage = $localStorage;
+
+  $scope.citations  = $scope.$storage.citations || 5;
+  $scope.minLength  = $scope.$storage.minLength || 1000;
+  $scope.totalPoints = $scope.$storage.totalPoints || 300;
+  $scope.decreaseBy = $scope.$storage.decreaseBy || 6;
+  $scope.defValue = $scope.$storage.defValue || 60;
+  $scope.catLen = $scope.$storage.catLen || 5;
+  // $scope.categories = paper.categories || CATS;
 
   $scope.getDefValue = function(total,len) {
   	return total*1.0/len};
@@ -26,32 +19,36 @@ angular.module('essayMarkupV1App')
   $scope.getWordCount = function (text) {
   	return text.match(/(\w)+/gi).length};
 
+  $scope.getTotal =  function(categories){
+    var total = 0;
+    for(var i = 0; i < categories.length; i++){
+        var cat = categories[i];
+        total += cat.value;
+    }
+    return total;
+  };
   $scope.updateValues = function (total, len) {
-
-    $scope.getTotal =  function(categories){
-      var total = 0;
-      for(var i = 0; i < categories.length; i++){
-          var cat = categories[i];
-          total += cat.value;
-      }
-      return total;
-    };
-  	// console.log($scope.decreaseBy, $scope.totalPoints)
-    $scope.decreaseBy = $scope.getDecreaseBy(total, len);
+   $scope.decreaseBy = $scope.getDecreaseBy(total, len);
     $scope.defValue = $scope.getDefValue(total, len);
   };
-  $scope.gradeEssay = function (minLength,totalPoints,decreaseBy,defValue) {
+  $scope.gradeEssay = function (minLength,totalPoints,decreaseBy,defValue, myPaper) {
+    // save to localstorage
+    $scope.$storage.minLength = minLength;
+    $scope.$storage.defValue = $scope.defValue;
+    $scope.$storage.decreaseBy = decreaseBy;
+    $scope.$storage.totalPoints = totalPoints;
+    $scope.$storage.catLen = $scope.catLen;
   	
-  	var paper = $scope.$storage.sPaper;
+  	var paper = myPaper || $scope.$storage.sPaper;
 
   	paper.minLength = minLength;
   	paper.defValue = defValue;
   	paper.decreaseBy = decreaseBy;
   	paper.totalPoints = totalPoints;
-    paper['categories'] = CATS;
   	paper['myFeedback'] = [];
   	paper['myComments'] = [];
   	paper['getTotal'] = $scope.getTotal;
+    paper['citationsNeeded'] = $scope.citations;
 	console.log(paper);
     gradeEssay(paper);
 
@@ -111,7 +108,7 @@ angular.module('essayMarkupV1App')
 
       paperObj['myFeedback']=[];
       paperObj['myComments']=[];
-      paperObj['categories']=$scope.copyObjArray(CATS);
+      paperObj['categories']=$scope.copyObjArray($scope.categories);
       paperObj['totalPoints']=totalPoints;
       paperObj['decreaseBy']=decreaseBy;
       paperObj['total']=0;
@@ -120,10 +117,11 @@ angular.module('essayMarkupV1App')
       paperObj['minLength']= minLength;
       paperObj['keyWords']= $scope.keyWords;
       paperObj['getTotal']= $scope.getTotal;
+      paperObj['citationsNeeded']= $scope.citations;
+
       // grades the essay for the paperObject
       // doesn't not return anything but updates myFeedback
       gradeEssay(paperObj);
-
       graded.push(paperObj);
     });
     console.log(graded);    

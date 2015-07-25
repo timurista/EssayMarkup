@@ -14,9 +14,15 @@
 angular.module('essayMarkupV1App')
   .controller('GPCtrl', function ($scope, $localStorage, Data) {
   	$scope.$storage = $localStorage;
+  	$scope.papers = JSON.parse(localStorage['ngStorage-papers']);
 
-  	$scope.papers = $scope.$storage.papers;
-  	$scope.thePaper={};
+  	$scope.getWC = Data.getWC;
+  	$scope.paper = {title:"None"};
+  	$scope.setPaper = function(paper) {
+  		$scope.paper = paper;
+  	}
+
+  	// $scope.papers = $scope.$storage.papers;
   	console.log($scope.papers)
 
   	$scope.downloadCSV = function() {
@@ -62,6 +68,20 @@ angular.module('essayMarkupV1App')
   			obj[key] = id;
   		})
   	}
+  	$scope.removePoints = function (paper,category) {
+  		var id = paper.categories.indexOf(category)
+  		// var id = -1;
+  		// console.log(category)
+  		// for (var i = 0; i < paper.categories.length; i++) {
+  		// 	if (paper.categories[i].name.indexOf(category)>-1) {
+  		// 		id=i; break;
+  		// 	}
+  		// };
+  		console.log(category,id, paper.categories[id])
+  		paper.categories[id].value-=paper.decreaseBy;
+
+
+  	}
 
   	$scope.annotatedText = Data.annotatedText;
 		$scope.getTotal = function(categories) {
@@ -72,33 +92,33 @@ angular.module('essayMarkupV1App')
 			return sum;
 		}
 
-		$scope.getGrade = function(myTotal,totalPoints) {
-			var percent = (myTotal/totalPoints);
-			
-			if (percent>=0.9) return 'A';
-			if (percent<0.9 && percent>=.8) return 'B';
-			if (percent<.8 && percent>=.7) return 'C';
-			if (percent<.7 && percent>=.6) return 'D';
-			return 'F';
-		}
+	$scope.getGrade = function(myTotal,totalPoints) {
+		var percent = (myTotal/totalPoints);
+		
+		if (percent>=0.9) return 'A';
+		if (percent<0.9 && percent>=.8) return 'B';
+		if (percent<.8 && percent>=.7) return 'C';
+		if (percent<.7 && percent>=.6) return 'D';
+		return 'F';
+	}
 
-		$scope.roundToOne = function(num) {
-			return Math.round( num * 10) / 10;
-		}
-		$scope.filterScore="0.8";
+	$scope.roundToOne = function(num) {
+		return Math.round( num * 10) / 10;
+	}
+	$scope.filterScore="0.8";
 
-		$scope.filteredScores = function(filter) {
-			return $scope.papers.filter( function(paper) {
-				var percent = (paper.total/paper.totalPoints).toString().match(/^\d+(?:\.\d{0,1})?/)[0];
-				// console.log(percent,filter)
-				return (percent===filter);
-			})
-		}
+	$scope.filteredScores = function(filter) {
+		return $scope.papers.filter( function(paper) {
+			var percent = (paper.total/paper.totalPoints).toString().match(/^\d+(?:\.\d{0,1})?/)[0];
+			// console.log(percent,filter)
+			return (percent===filter);
+		})
+	}
 
-		$scope.removeFeed = function (myFeed, feedback) {
-			console.log(feedback);
-			var id = feedback.indexOf(myFeed);
-			feedback.splice(id,1);
-		}
+	$scope.removeFeed = function (myFeed, feedback) {
+		console.log(feedback);
+		var id = feedback.indexOf(myFeed);
+		feedback.splice(id,1);
+	}
 
   });

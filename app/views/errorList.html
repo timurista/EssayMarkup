@@ -9,7 +9,7 @@
       <div class="row">
         <div class="col-md-2">
           <!-- toggle button error -->
-          <button ng-init="error.on=true" ng-model="error.on" ng-click="error.on=!error.on" ng-class="{'btn tgl-on':error.on, 'btn tgl-off':!error.on}">
+          <button ng-model="error.on" ng-click="error.on=!error.on" ng-class="{'btn tgl-on':error.on, 'btn tgl-off':!error.on}">
             {{error.on ? 'On':'Off'}}
           </button>
         </div>
