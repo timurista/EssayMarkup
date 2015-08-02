@@ -9,8 +9,6 @@
 //                    simpleSheet: true } ).failure(function(error) {console.log(error)})
 // }
 
-// TODO allow for editing of essays
-
 angular.module('essayMarkupV1App')
   .controller('GPCtrl', function ($scope, $localStorage, Data) {
   	$scope.$storage = $localStorage;
@@ -26,7 +24,7 @@ angular.module('essayMarkupV1App')
   	console.log($scope.papers)
 
   	$scope.downloadCSV = function() {
-  		console.log('pressed')
+  		console.log('Downloading...');
 
   		var data = {};
   		$scope.papers.forEach( function(paper) {
@@ -37,19 +35,62 @@ angular.module('essayMarkupV1App')
   				data[paper.studentName]=total;
   			}
   		})
+
   		// get data from papers
 		var csvContent = "data:text/csv;charset=utf-8,";
 		var keys = Object.getOwnPropertyNames(data);
 		// sort names into order of ascending
 		keys.sort();
 
-		keys.forEach(function(key){
-		   var dataString = '"'+key+'",'+data[key];
-		   csvContent += dataString+'\n';
-		}); 
-		var encodedUri = encodeURI(csvContent);
-		window.open(encodedUri);
-  	}
+    var g = $scope.$storage.groups.filter(Boolean);
+    for (var i = 0; i < g.length; i++) {
+
+      var csvContent = "data:text/csv;charset=utf-8,";
+      var groups = g[i]['data'] || [];
+      // console.log(i)
+
+      // loop over each group set content
+      console.log(groups);
+      if (true) {
+        for (var j = 0; j < groups.length; j++) {
+          var row = groups[j].slice();
+          var name = groups[j][1];
+          // look through the keys for matching name
+          keys.forEach(function(key){
+            if (name==key) {
+              // set col 2 to be updated score
+              row[2]=data[key];
+            }
+            // else {
+            //   row[2]=0;
+            // };
+          });
+          row[1] = '"'+row[1]+'"';
+          csvContent += row.join(',')+'\n';
+        }
+        console.log(g,g[i].name);
+        // console.log('CSV',csvContent);
+        // No useful name method
+        // var encodedUri = encodeURI(csvContent);
+        // window.open(encodedUri);
+
+        //with a name
+        var uri = encodeURI(csvContent);
+        var downloadLink = document.createElement("a");
+        downloadLink.href = uri;
+        downloadLink.download = g[i]['name']+"_scores.csv";
+
+        document.body.appendChild(downloadLink);
+        downloadLink.click();
+        document.body.removeChild(downloadLink);
+
+
+        };
+      };
+
+    };
+
+    
   	
   	// $scope.average = function() {
   	// 	var sum = 0;

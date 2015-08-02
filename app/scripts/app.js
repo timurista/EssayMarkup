@@ -68,8 +68,12 @@ angular
           feedback.forEach( function(obj,id) {
           var comment = obj.comment;
           // find examples and get errors            // find error then display it'
+          var escapeRegExp = function(str) {
+            return str.replace(/[\-\[\]\/\{\}\(\)\*\+\?\.\\\^\$\|]/g, "\\$&");
+          }
             if (obj.example) {
-            var example = new RegExp('('+obj.example+')','gi');
+              var text = escapeRegExp(obj.example).replace('. ','');
+            var example = new RegExp('('+text+')','gi');
               // console.log(example, obj);
               // console.log(text.match(example))
             var rplString = '$1</span> <strong>[1.'+(id+1)+']</strong>';

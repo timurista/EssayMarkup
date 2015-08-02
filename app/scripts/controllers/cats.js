@@ -2,7 +2,7 @@ var CATS = [
     {'name': 'Grammar and Spelling',
      'value':60,
      'errors':[
-      {'re':/(\s[i]\s)/g,'comment':'"I" should always be capitalized, but an error was found in your essay where it was not capitalized.','name':'I not capitalized','on':true},
+      {'re':/(\s[i]\s)/g,'comment':'"I" should always be capitalized, but an error was found in your essay where it was not capitalized.','name':'I not capitalized','on':false},
 // poorly spelled words 
 
 // its problems
@@ -32,37 +32,37 @@ var CATS = [
 
 // mechanics issues
       {'re':/(\ba [aeio]\w+)/gi,'comment':'Remember, use an before words that begin with vowels.','name':'Missing an before vowel','on':true},
-      {'re':/(\w{4,}\.\s* [a-z]\w+)/g,'comment':'Capitalization is a problem in this essay.','on':true},
-      {'re':/(\w+[A-Z]\w{4,})/g,'comment':'Avoid all caps in your essay, even if you are citing a web source.','on':true},
-      {'re':/(\w+\s{0,1},\s{0,1}[A-Z][a-z]{0,1}\b)/g,'comment':'Remember not to capitalize after a comma.','on':true},
+      {'re':/(\w{4,}\.\s* [a-z]\w+)/g,'comment':'Capitalization is a problem in this essay.','name':'Capitalization 1','on':true},
+      {'re':/(\w+[A-Z]\w{4,})/g,'comment':'Avoid all caps in your essay, even if you are citing a web source.','name':'No ALLCAPS 1','on':true},
+      {'re':/(\w+\s{0,1},\s{0,1}[A-Z]{1,}[a-z]{1,}\b)/g,'comment':'Remember not to capitalize after a comma.','name':'Capitalization After Comma 1','on':false},
 
 
 // Faulty parallelism
-      // {'re':/(\w+\swho[a-zA-Z\s,;]+and\s(?!who)\w+)/g,'comment':'Parallelism error: Make sure each each item is balanced in terms of gramatical weight.','on':true},
+      // {'re':/(\w+\swho[a-zA-Z\s,;]+and\s(?!who)\w+)/g,'comment':'Parallelism error: Make sure each each item is balanced in terms of grammatical weight.','on':true},
       {'re':/(\bin.+?,.+?\sor\sin\s\w+)/g,'comment':'You don\t need to include that in when you are introducing a series of related ideas. Remember to keep parallel structures the same.','on':true},
 
 // subject verb agreement
-      {'re':/(\bdifferences is\b)/g,'comment':'Remember pluarl subjects take a singular verb.','on':true},
-      {'re':/(differences)(?:\s[^\.]+?includes)/g,'comment':'Remember pluarl subjects take a singular verb.','on':true},
-      {'re':/(\beveryone were\b)/g,'comment':'Remember pluarl subjects take a singular verb.','on':true},
-      {'re':/(\beveryone are\b)/g,'comment':'Remember pluarl subjects take a singular verb.','on':true},
-      {'re':/(\banyone are\b)/g,'comment':'Remember pluarl subjects take a singular verb.','on':true},
-      {'re':/(\bsomeone are\b)/g,'comment':'Remember pluarl subjects take a singular verb.','on':true},
-      {'re':/(\banyone are\b)/g,'comment':'Remember pluarl subjects take a singular verb.','on':true},
-      {'re':/(\bherd are\b)/g,'comment':'Remember pluarl subjects take a singular verb.','on':true},
-      {'re':/(\bpack are\b)/g,'comment':'Remember pluarl subjects take a singular verb.','on':true},
-      {'re':/(\bswarm are\b)/g,'comment':'Remember pluarl subjects take a singular verb.','on':true},
-      {'re':/(\bflock are\b)/g,'comment':'Remember pluarl subjects take a singular verb.','on':true},
-      {'re':/(\bgroup are\b)/g,'comment':'Remember pluarl subjects take a singular verb.','on':true},
-      {'re':/(\bbunch are\b)/g,'comment':'Remember pluarl subjects take a singular verb.','on':true},
-      {'re':/(\bcrowd are\b)/g,'comment':'Remember pluarl subjects take a singular verb.','on':true},
+      {'re':/(\bdifferences is\b)/g,'comment':'Remember plural subjects take a singular verb.','on':true},
+      {'re':/(differences)(?:\s[^\.]+?includes)/g,'comment':'Remember plural subjects take a singular verb.','on':true},
+      {'re':/(\beveryone were\b)/g,'comment':'Remember plural subjects take a singular verb.','on':true},
+      {'re':/(\beveryone are\b)/g,'comment':'Remember plural subjects take a singular verb.','on':true},
+      {'re':/(\banyone are\b)/g,'comment':'Remember plural subjects take a singular verb.','on':true},
+      {'re':/(\bsomeone are\b)/g,'comment':'Remember plural subjects take a singular verb.','on':true},
+      {'re':/(\banyone are\b)/g,'comment':'Remember plural subjects take a singular verb.','on':true},
+      {'re':/(\bherd are\b)/g,'comment':'Remember plural subjects take a singular verb.','on':true},
+      {'re':/(\bpack are\b)/g,'comment':'Remember plural subjects take a singular verb.','on':true},
+      {'re':/(\bswarm are\b)/g,'comment':'Remember plural subjects take a singular verb.','on':true},
+      {'re':/(\bflock are\b)/g,'comment':'Remember plural subjects take a singular verb.','on':true},
+      {'re':/(\bgroup are\b)/g,'comment':'Remember plural subjects take a singular verb.','on':true},
+      {'re':/(\bbunch are\b)/g,'comment':'Remember plural subjects take a singular verb.','on':true},
+      {'re':/(\bcrowd are\b)/g,'comment':'Remember plural subjects take a singular verb.','on':true},
 
 // whose as contraction
       {'re':/(\bwho's money\b)/g,'comment':'Use too for when you want to say overly or also and to a preposition.','on':true},
       {'re':/(\bwho's life\b)/g,'comment':'Use too for when you want to say overly or also and to a preposition.','on':true},
 
 // fewer vs less
-      {'re':/(\b\w+ less \w+[eni]s\b)/g,'comment':'Use less when your writing about a continous quantity and fewer when you are writing about multiple items.','on':true},
+      {'re':/(\b\w+ less \w+[eni]s\b)/g,'comment':'Use less when your writing about a continuous quantity and fewer when you are writing about multiple items.','on':true},
 
 // too vs to
       {'re':/(\b\w+ to many \w+)/g,'comment':'Use too for when you want to say overly or also and to a preposition.','on':true},
@@ -77,7 +77,7 @@ var CATS = [
       {'re':/(\sbeing as\s)/g,'comment':'This is the wrong expression for being, instead just use was instead','on':true},
 
 //introducing clauses
-    {'re':/(\bFor example[^,]\b)/gi,
+    {'re':/\.\s*(For example[^,]\b)/gi,
      'comment':'Introductory elements need a comma after them',
      'name':'For example needs comma after','on':true},
 
@@ -86,6 +86,7 @@ var CATS = [
     {'name': 'Ideas and Content',
      'value': 60,
      'errors':[
+     {'re':/(This essay will)/gi,'comment':'Your thesis or opening paragraph should explain three main points without claiming what the author will do. Instead, the writer should make an argument such as "There are four reasons explaining why these two individuals are similar..." Arguments frame your thesis better for the reader, try revising this part to make your essay really pop.','name':'Checking This Essay will show','on':true},
       {'re':/(\bstuffs?\b)/gi,'comment':'Your language is at times not specific which causes some of your ideas to fall flat. Use clear transitions and specific language instead of "stuff" to capture your main points.','on':true},
       {'re':/(\bthings?\b)/gi,'comment':'Make sure to use specific language instead of "thing" to capture your main points.','on':true},
       {'re':/(\bsort of\b)/gi,'comment':'Can you use a better vocabulary word here? Perhaps a phrase such as "to some degree" or "almost" might work better. But try and find better ways to express your ideas here.','on':true},
@@ -95,7 +96,7 @@ var CATS = [
      'value': 60,
      'errors':[
       {'re':/(\bi think)/gi,'comment':'Get into the habit of organizing your thoughts without using I think.','on':true},
-      // unclear anticident
+      // unclear antecedent
     {'re':/(\bThis\s(is|was)\s\w+)/g,
      'comment':'What exactly is this referring to here? It is unclear',
      'name':'Unclear Antecedent 1','on':true},
@@ -109,7 +110,7 @@ var CATS = [
      'value': 60,
      'errors':[
      {'re':/(i believe)/gi,'comment':'Some style and word choice errors.','on':true},
-     {'re':/(a\s*lot)/gi,'comment':'Rather than using vague language such as "alot", you such be more specific with your example and overall language.','on':true},
+     {'re':/(a\s*lot)/gi,'comment':'Rather than using vague language such as "a lot", you such be more specific with your example and overall language.','on':true},
      {'re':/(\bvery\s*\w+)/gi,'comment':'Try to find words or specific adjectives that capture what exactly you are trying to say instead of using two word phrases with modifiers like "very" to hold up weak adjectives.','on':true},
 // own
      {'re':/(\bown\s*\w+)/gi,
@@ -148,8 +149,8 @@ var CATS = [
      'value': 60,
      'errors':[
      //{'re':/()/gi,'comment':'Some Documentation errors.'},
-     {'re':/([“"][^A-Z()]+?\..[^()]+?[a-zA-Z]+)/g,'comment':'Remember to support your quotes with citations. Or if you didn\'t mean to use quotes as emphasis, might you consider removing them alltogether? Or putting the material in single-quotes to help readers?','name':'No citations for quotes','on':true},
-     {'re':/(Wikipedia)/gi,'comment':'Avoid citing wikipedia directly and instead only reference the sources that wikipedia points to.','on':true},
+     {'re':/([“"][^A-Z()]+?\..[^()]+?[a-zA-Z]+)/g,'comment':'Remember to support your quotes with citations. Or if you didn\'t mean to use quotes as emphasis, might you consider removing them altogether? Or putting the material in single-quotes to help readers?','name':'No citations for quotes','on':false},
+     {'re':/(Wikipedia)/gi,'comment':'Avoid citing Wikipedia directly and instead only reference the sources that Wikipedia points to.','on':true},
      ],
    },
   ];

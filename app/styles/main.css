@@ -28,14 +28,6 @@ body {
   border: 2px solid black;
 }
 
-/* Everything but the jumbotron gets side spacing for mobile first views */
-/*.header,
-.marketing,
-.footer {
-  padding-left: 15px;
-  padding-right: 15px;
-}*/
-
 /* Custom page header */
 .header {
   border-bottom: 1px solid #e5e5e5;
@@ -129,12 +121,9 @@ ul
   line-height: 200%;
   padding: 30px;
 }
-
-/* Main Toggle Button */
-
-/*printing*/
-
-
+.feedback-area {
+  font-size: 10pt;
+}
 
 
 /* Responsive: Portrait tablets and up */
@@ -163,7 +152,7 @@ ul
 /*print media*/
 @media print {
   .paper {page-break-after: always;}
-  .options, .autoFeedback, .displayOptions 
+  .options, .autoFeedback, .displayOptions, .debug, .download 
   {display: none !important;}
 }
 /**/

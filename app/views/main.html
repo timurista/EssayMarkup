@@ -92,7 +92,7 @@
       <ul>
         
         <li ng-repeat="myFeed in paper.myFeedback">{{myFeed.comment}} {{myFeed.example ? '(EX: '+myFeed.example+')':''}}
-          {{myFeed.category.name}}
+        <strong ng-show="myFeed.deduct"><em>{{-1*myFeed.deduct}}</em></strong>
         <button class="btn btn-danger" ng-click="paper.myFeedback.splice($index,1); addBackToCategory(myFeed.category,paper)" ng-show="show">-</button>
         </li>
       </ul>
@@ -101,9 +101,8 @@
     </label>
     <ul class="">
       <li ng-repeat="myComment in paper.myComments track by $index"> 
-        <p>
-        {{myComment.selectedComment}}
-        
+        <p>{{myComment.comment}}
+        <strong ng-show="myComment.deduct"><em>{{-1*myComment.deduct}}</em></strong>
         <span ng-show="{{myComment.example.length>0}}">
         (Example: {{myComment.example}})
         </span>
@@ -126,7 +125,8 @@
         <tr>
           <td>Final Grade</td>
           <td></td>
-          <td><strong>{{getTotal(paper.categories).toFixed(1)}} / {{paper.totalPoints}}</strong></td>
+          <td><strong>{{getTotal(paper.categories).toFixed(1)}} / {{paper.totalPoints}}</strong> -- 
+            {{((getTotal(paper.categories)/paper.totalPoints)*100).toFixed(1)}}% </td>
         </tr>
       </table>
     </div>

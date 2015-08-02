@@ -80,7 +80,8 @@ angular.module('essayMarkupV1App')
 
     //instantiate comments using ngstorage    
     $scope.$storage = $localStorage.$default({
-        allComments: [], 
+        allComments: [],
+        groups: [], 
         sindex: 0,
         sPaper: {
           'timestamp':Date.now(),
@@ -155,7 +156,7 @@ angular.module('essayMarkupV1App')
     // load paper
     $scope.myPaper = $scope.$storage.sPaper;
 
-    console.log('Comments',$scope.comments,$scope.$storage.allComments);
+    // console.log('Comments',$scope.comments,$scope.$storage.allComments);
 
     // filter
     $scope.filter = "";
@@ -370,7 +371,7 @@ angular.module('essayMarkupV1App')
   	});
   });
   $scope.addBackToCategory = function(category, paper) {
-    console.log(category.name, paper.decreaseBy);
+    console.log(category, paper.decreaseBy);
     try {
       var id = paper.categories.indexOf(category);
       paper.categories[id].value+=paper.decreaseBy;
