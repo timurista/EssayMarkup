@@ -124,7 +124,7 @@
 			      <table class="table">
 			        <tr ng-repeat="category in paper.categories" >
 			            <td class="col-md-4">{{category.name}}</td>
-			            <td class="col-md-4">{{category.value < .5*defValue ? 'Needs Work':''}}</td>
+			            <td class="col-md-4"></td>
 
 			            <td class="col-md-4">
 			            	<strong ng-model="category.value">{{category.value| number:1}}</strong>

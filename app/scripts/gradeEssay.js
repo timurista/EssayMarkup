@@ -100,7 +100,7 @@ var gradeEssay = function(paper) {
 
 var findSentences = function(paper) {
   var re_raw =/(\S.{6,}?[.!?])(?=\s*|$)/gi;
-  var abrv_pattern = /([A-Z]{1,}[a-z]*\.)(?=\s+)/g
+  var abrv_pattern = /([A-Z]{1,3}[a-z]{,3}\.)(?=\s+)/g
   var aside_pattern = /(\(.+?\))/g;
   var cite_pattern = /(\([^(;)]*\d+\))/g;
   var quote_pattern = /(\".+?\")/g;
@@ -286,8 +286,12 @@ var gradeTitle = function(paper) {
 
 var gradeKeyWords = function(paper) {
   console.log(paper.sentences);
-  console.log(paper.keyWords, paper);
+  paper.keyWords = (paper.keyWords)?paper.keyWords:'';
   var kws = paper.keyWords.split(",") || [];
+  // filter kws, removing empty elements
+  kws = $.grep(kws,function(n){ return(n) });
+  console.log(paper.keyWords,kws, paper);
+  
   var found = 0;
   kws.forEach( function(kw) {
     if (paper.filteredText.indexOf(kw.toLowerCase())) {
